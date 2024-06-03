@@ -27,13 +27,17 @@ class FolderController extends Controller
             'parent_id' => 'nullable|exists:folders,id'
         ]);
 
-        $folder = Folder::create([
-            'user_id' => $request->user()->id,
-            'name' => $request->name,
-            'parent_id' => $request->parent_id
-        ]);
-
-        return response()->json(['success' => true, 'data' => $folder], 201);
+        try {
+            $folder = Folder::create([
+                'user_id' => $request->user()->id,
+                'name' => $request->name,
+                'parent_id' => $request->parent_id
+            ]);
+        
+            return response()->json(['success' => true, 'data' => $folder], 201);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function destroy(Folder $folder)
