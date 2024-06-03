@@ -8,7 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class File extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'folder_id', 'name', 'path', 'type'];
+
+    protected $fillable = [
+        'name',
+        'path',
+        'type',
+        'folder_id',
+        'user_id',
+    ];
 
     public function user()
     {

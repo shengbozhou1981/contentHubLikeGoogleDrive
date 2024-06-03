@@ -23,11 +23,17 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::post('/register', [ProfileController::class, 'register']);
 
-    Route::get('/files', [FileController::class, 'index']);
-    Route::post('/files', [FileController::class, 'store']);
-    Route::delete('/files/{file}', [FileController::class, 'destroy']);
-
+    // Folder routes
     Route::get('/folders', [FolderController::class, 'index']);
     Route::post('/folders', [FolderController::class, 'store']);
-    Route::delete('/folders/{folder}', [FolderController::class, 'destroy']);
+    Route::get('/folders/{id}', [FolderController::class, 'show']);
+    Route::put('/folders/{id}', [FolderController::class, 'update']);
+    Route::delete('/folders/{id}', [FolderController::class, 'destroy']);
+
+    // File routes
+    Route::get('/files', [FileController::class, 'index']);
+    Route::post('/files', [FileController::class, 'store']);
+    Route::get('/files/{id}', [FileController::class, 'show']);
+    Route::put('/files/{id}', [FileController::class, 'update']);
+    Route::delete('/files/{id}', [FileController::class, 'destroy']);
 });

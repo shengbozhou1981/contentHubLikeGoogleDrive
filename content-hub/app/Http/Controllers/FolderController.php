@@ -3,46 +3,74 @@
 namespace App\Http\Controllers;
 
 use App\Models\Folder;
-use App\Models\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FolderController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $folders = Folder::where('user_id', $request->user()->id)
-                         ->where('parent_id', $request->query('parent_id'))
-                         ->get();
-        $files = File::where('user_id', $request->user()->id)
-                     ->where('folder_id', $request->query('parent_id'))
-                     ->get();
-
-        return response()->json(['success' => true, 'data' => ['folders' => $folders, 'files' => $files]], 200);
+        try {
+            $folders = Folder::where('user_id', Auth::id())->get();
+            return response()->json(['folders' => $folders], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch folders'], 500);
+        }
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:folders,id'
+            'parent_id' => 'nullable|exists:folders,id',
         ]);
 
         try {
             $folder = Folder::create([
-                'user_id' => $request->user()->id,
-                'name' => $request->name,
-                'parent_id' => $request->parent_id
+                'name' => $validatedData['name'],
+                'user_id' => Auth::id(),
+                'parent_id' => $validatedData['parent_id'],
             ]);
-        
-            return response()->json(['success' => true, 'data' => $folder], 201);
+            return response()->json(['folder' => $folder], 201);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Failed to create folder'], 500);
         }
     }
 
-    public function destroy(Folder $folder)
+    public function show($id)
     {
-        $folder->delete();
-        return response()->json(['success' => true, 'message' => 'Folder deleted successfully'], 200);
+        try {
+            $folder = Folder::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+            return response()->json(['folder' => $folder], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Folder not found'], 404);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:folders,id',
+        ]);
+
+        try {
+            $folder = Folder::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+            $folder->update($validatedData);
+            return response()->json(['folder' => $folder], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to update folder'], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $folder = Folder::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+            $folder->delete();
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete folder'], 500);
+        }
     }
 }

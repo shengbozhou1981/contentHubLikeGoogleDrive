@@ -4,44 +4,96 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $files = File::where('user_id', $request->user()->id)
-                     ->where('folder_id', $request->query('folder_id'))
-                     ->get();
-
-        return response()->json(['success' => true, 'data' => $files], 200);
+        try {
+            $files = File::where('user_id', Auth::id())->get();
+            return response()->json(['files' => $files], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to fetch files'], 500);
+        }
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,txt',
-            'folder_id' => 'nullable|exists:folders,id'
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:10240', // 最大10MB
+            'folder_id' => 'nullable|exists:folders,id',
+            'type' => 'required|string|max:255',
         ]);
 
-        $file = $request->file('file');
-        $path = $file->store('files', 'public');
+        try {
+            $path = $request->file('file')->store('files');
 
-        $file = File::create([
-            'user_id' => $request->user()->id,
-            'folder_id' => $request->folder_id,
-            'name' => $file->getClientOriginalName(),
-            'path' => $path,
-            'type' => $file->getClientMimeType(),
-        ]);
+            $file = File::create([
+                'name' => $validatedData['name'],
+                'path' => $path,
+                'type' => $validatedData['type'],
+                'folder_id' => $validatedData['folder_id'],
+                'user_id' => Auth::id(),
+            ]);
 
-        return response()->json(['success' => true, 'data' => $file], 201);
+            return response()->json(['file' => $file], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to upload file'], 500);
+        }
     }
 
-    public function destroy(File $file)
+    public function show($id)
     {
-        Storage::disk('public')->delete($file->path);
-        $file->delete();
-        return response()->json(['success' => true, 'message' => 'File deleted successfully'], 200);
+        try {
+            $file = File::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+            return response()->json(['file' => $file], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $file = File::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:10240',
+            'folder_id' => 'nullable|exists:folders,id',
+            'type' => 'required|string|max:255',
+        ]);
+
+        try {
+            if ($request->hasFile('file')) {
+                Storage::delete($file->path);
+                $path = $request->file('file')->store('files');
+                $file->path = $path;
+            }
+
+            $file->update([
+                'name' => $validatedData['name'],
+                'folder_id' => $validatedData['folder_id'],
+                'type' => $validatedData['type'],
+            ]);
+
+            return response()->json(['file' => $file], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to update file'], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $file = File::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+            Storage::delete($file->path);
+            $file->delete();
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to delete file'], 500);
+        }
     }
 }
