@@ -19,6 +19,11 @@ mv .env.example .env
 in .env file, you need to update two variables, APP_KEY, DB_DATABASE
 run ```php artisan key:generate``` to create new APP_KEY, it will update the variable automatically
 Modify db directory according to yours: 
+
+```
+php artisan key:generate
+```
+
 ```
 DB_DATABASE=/home/tonyzhou/projects/content-hub-backend/content-hub/database/database.sqlite
 ```
