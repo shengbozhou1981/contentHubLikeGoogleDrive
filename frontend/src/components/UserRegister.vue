@@ -16,7 +16,12 @@
       </div>
       <div class="form-group">
         <label for="password_confirmation">Confirm Password</label>
-        <input v-model="password_confirmation" type="password" id="password_confirmation" required />
+        <input
+          v-model="password_confirmation"
+          type="password"
+          id="password_confirmation"
+          required
+        />
       </div>
       <button type="submit">Register</button>
       <p v-if="error" class="error">{{ error }}</p>
@@ -25,51 +30,62 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: '',
-      error: '',
+      name: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
+      error: "",
     };
   },
   methods: {
-  register() {
-    axios.get('/sanctum/csrf-cookie').then(() => {
-      axios.post('/register', {
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        password_confirmation: this.password_confirmation,
-      }).then((response) => {
-        console.log("test....");
-        console.log(response);
-        if (response.status === 200) {
-          // Handle successful registration, e.g., show success message
-          console.log("test....200");
-          this.errors = {}; // Clear errors
-          localStorage.setItem('user', JSON.stringify(response.data));
-          console.log("test--------");
-          this.$router.push('/login'); // Optionally redirect
-        } else if (response.status === 400) {
-          // Handle invalid request, e.g., show error message
-          this.errors =
-            "Invalid request. Please check your details and try again.";
-        } else {
-          // Handle other status codes, e.g., show error message
-          this.errors =
-            "An unexpected error occurred. Please try again later.";
-        }
-      }).catch(() => {
-        this.err = 'Registration failed. Please check your details and try again.';
+    register() {
+      axios.get("/sanctum/csrf-cookie").then(() => {
+        console.log('test start');
+        axios
+          .post("/register", {
+            name: this.name,
+            email: this.email,
+            password: this.password,
+            password_confirmation: this.password_confirmation,
+          })
+          .then((response) => {
+            console.log("test....");
+            console.log(response);
+            if (response.status === 200) {
+              // Handle successful registration, e.g., show success message
+              console.log("test....200");
+              this.errors = {}; // Clear errors
+              localStorage.setItem("user", JSON.stringify(response.data));
+              console.log("test--------");
+              this.$router.push("/login"); // Optionally redirect
+            } else if (response.status === 400) {
+              // Handle invalid request, e.g., show error message
+              this.errors =
+                "Invalid request. Please check your details and try again.";
+            } else {
+              // Handle other status codes, e.g., show error message
+              this.errors =
+                "An unexpected error occurred. Please try again later.";
+            }
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 422) {
+              // Handle validation errors
+              this.errors = error.response.data.errors;
+            } else {
+              // Handle other errors
+              this.errors =
+                "Registration failed. Please check your details and try again.";
+            }
+          });
       });
-    });
+    },
   },
-},
 };
 </script>
 

@@ -18,11 +18,16 @@
 
 <script>
 import axios from "axios";
+// import { inject } from 'vue';
 // import { mapState, mapMutations } from 'vuex';
 
 export default {
+  setup() {
+    // const loggedIn = inject('loggedIn');
+  },
+
   computed: {
-    // 
+    //
     // ...mapState(['user']),
   },
   data() {
@@ -32,30 +37,35 @@ export default {
       error: "",
     };
   },
+  
   methods: {
     // ...mapMutations(['setUser']),
     async login() {
+      this.error = null;
       try {
         // First, get the CSRF cookie. This is necessary for Laravel's CSRF protection.
         await axios.get("/sanctum/csrf-cookie");
+        console.log("test start");
         // Then, send a POST request to the /login endpoint with the email and password.
-        const response = await axios.post("/login", {
+        const res = await axios.post("/login", {
           email: this.email,
           password: this.password,
         });
 
-        if (response.status === 200) {
-          // If the request is successful, store the user data in localStorage and redirect to the home page.
-          // this.setUser(response.data);
-          localStorage.setItem("user", JSON.stringify(response.data));
+        console.log(res);
+        if (res.status === 200 || res.status === 204) {
+          this.$parent.loggedIn = true;
+          console.log(this.$parent.loggedIn);
+          localStorage.setItem("user", JSON.stringify(res.data));
           this.$router.push("/");
+
         } else {
           // If the request authentication fails, set an error message to be displayed to the user.
           this.error = "Invalid login credentials";
         }
       } catch (err) {
         // If there's a network error or other error, set an error message to be displayed to the user.
-        this.error = "some network error occurred，please try again later.";
+        this.error = "Some network error occurred, please try again later.";
       }
     },
   },

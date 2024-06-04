@@ -2,13 +2,20 @@
   <div id="app">
     <header>
       <nav class="nav-bar">
-    <router-link class="nav-item" to="/">Guard.me Content Hub</router-link>
-    <div class="nav-right">
-      <router-link v-if="!loggedIn" class="nav-item" to="/login">Login</router-link>
-      <router-link v-if="!loggedIn" class="nav-item" to="/register">Register</router-link>
-      <button v-if="loggedIn" class="nav-item" @click="logout">Logout</button>
-    </div>
-  </nav>
+        <img src="/logo.png" alt="Company Logo" class="logo">
+        <router-link class="nav-item large-font"  to="/">Guard.me Content Hub</router-link>
+        <div class="nav-right">
+          <router-link v-if="!loggedIn" class="nav-item" to="/login"
+            >Login</router-link
+          >
+          <router-link v-if="!loggedIn" class="nav-item" to="/register"
+            >Register</router-link
+          >
+          <button v-if="loggedIn" class="nav-item" @click="logout">
+            Logout
+          </button>
+        </div>
+      </nav>
     </header>
     <main>
       <router-view />
@@ -17,24 +24,25 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { logout as logoutUser } from '@/services/authService';
-import { useRouter } from 'vue-router';
+import { ref, provide } from "vue";
+import { logout as logoutUser } from "@/services/authService";
+import { useRouter } from "vue-router";
 
 export default {
   setup() {
     const router = useRouter();
-    const loggedIn = ref(localStorage.getItem('user') !== null);
+    const loggedIn = ref(localStorage.getItem("user") !== null);
+    provide('loggedIn', loggedIn);
 
     const logout = async () => {
       await logoutUser();
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
       loggedIn.value = false;
-      router.push('/login');
+      router.push("/login");
     };
 
     return { loggedIn, logout };
-  }
+  },
 };
 </script>
 
@@ -49,8 +57,8 @@ export default {
 }
 
 header {
-  background-color: #42b983;
-  padding: 15px;
+  background-color: #008000; /* darker background */
+  padding: 20px; /* more padding */
   color: white;
 }
 
@@ -64,6 +72,10 @@ nav a.router-link-exact-active {
   font-weight: bold;
 }
 
+nav a:hover {
+  color: #42b983; /* hover effect */
+}
+
 main {
   padding: 20px;
 }
@@ -71,6 +83,13 @@ main {
 .nav-bar {
   display: flex;
   justify-content: space-between;
+  align-items: center; /* align items vertically */
+  height: 60px; /* more height */
+}
+
+.nav-bar .logo {
+  height: 100%;
+  object-fit: contain; /* contain the logo within its height */
 }
 
 .nav-right {
@@ -80,5 +99,9 @@ main {
 
 .nav-item {
   margin-right: 10px;
+}
+
+.large-font {
+  font-size: 50px;
 }
 </style>

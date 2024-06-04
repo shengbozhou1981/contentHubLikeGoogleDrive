@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\ProfileController;
+Use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +19,10 @@ use App\Http\Controllers\ProfileController;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
+    Route::get('/', function (Request $request) {
         return $request->user();
     });
-    Route::post('/register', [ProfileController::class, 'register']);
+    // Route::post('/register', [AuthenticatedSessionController::class, 'register']);
 
     // Folder routes
     Route::get('/folders', [FolderController::class, 'index']);
