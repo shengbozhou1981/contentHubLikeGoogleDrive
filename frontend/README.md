@@ -10,15 +10,10 @@ npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Open browser and go the app running url, you will go to main page and then register new user or login.
 ```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+  App running at:
+  - Local:   http://localhost:8080/
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
