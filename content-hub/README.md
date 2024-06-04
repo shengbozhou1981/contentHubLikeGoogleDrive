@@ -16,9 +16,13 @@ or other command tool to install.
 ```
 mv .env.example .env
 ```
-    in .env file, you need to update two variables, APP_KEY, DB_DATABASE
-    run ```php artisan key:generate``` to create new APP_KEY, it will update the variable automatically
-    Modify db directory according to yours: DB_DATABASE=/home/tonyzhou/projects/content-hub-backend/content-hub/database/database.sqlite
+in .env file, you need to update two variables, APP_KEY, DB_DATABASE
+run ```php artisan key:generate``` to create new APP_KEY, it will update the variable automatically
+Modify db directory according to yours: 
+```
+DB_DATABASE=/home/tonyzhou/projects/content-hub-backend/content-hub/database/database.sqlite
+```
+
 
 2. Setup Database
 In this project, for demo convenience we use built in memory db sqlite, under the database folder, create a new database file called database.sqlite
