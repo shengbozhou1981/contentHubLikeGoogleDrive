@@ -45,7 +45,7 @@ export default {
   methods: {
     register() {
       axios.get("/sanctum/csrf-cookie").then(() => {
-        console.log('test start');
+        console.log("test start");
         axios
           .post("/register", {
             name: this.name,

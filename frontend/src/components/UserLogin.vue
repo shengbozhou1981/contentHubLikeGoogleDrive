@@ -27,7 +27,6 @@ export default {
   },
 
   computed: {
-    //
     // ...mapState(['user']),
   },
   data() {
@@ -37,7 +36,7 @@ export default {
       error: "",
     };
   },
-  
+
   methods: {
     // ...mapMutations(['setUser']),
     async login() {
@@ -52,13 +51,10 @@ export default {
           password: this.password,
         });
 
-        console.log(res);
         if (res.status === 200 || res.status === 204) {
           this.$parent.loggedIn = true;
-          console.log(this.$parent.loggedIn);
           localStorage.setItem("user", JSON.stringify(res.data));
           this.$router.push("/");
-
         } else {
           // If the request authentication fails, set an error message to be displayed to the user.
           this.error = "Invalid login credentials";

@@ -30,24 +30,27 @@
     <!-- Upload File Section -->
 
     <div>
-  <label for="fileUpload" style="margin-right: 10px;">Upload File:</label>
-  <input id="fileUpload" type="file" @change="handleFileUpload" />
+      <label for="fileUpload" style="margin-right: 10px">Upload File:</label>
+      <input id="fileUpload" type="file" @change="handleFileUpload" />
 
-  <label for="selectedFolderId" style="margin-right: 10px;">Select Folder:</label>
-  <select id="selectedFolderId" v-model="selectedFolderId" >
-    <option value="">Select Folder</option>
-    <option
-      v-for="folder in flatFolders"
-      :key="folder.id"
-      :value="folder.id"
-    >
-      {{ folder.name }}
-    </option>
-  </select>
+      <label for="selectedFolderId" style="margin-right: 10px"
+        >Select Folder:</label
+      >
+      <select id="selectedFolderId" v-model="selectedFolderId">
+        <option value="">Select Folder</option>
+        <option
+          v-for="folder in flatFolders"
+          :key="folder.id"
+          :value="folder.id"
+        >
+          {{ folder.name }}
+        </option>
+      </select>
 
-  <button style="align-self: center;" @click="uploadNewFile">Upload File</button>
-</div>
-
+      <button style="align-self: center" @click="uploadNewFile">
+        Upload File
+      </button>
+    </div>
 
     <!-- Folders and Files List Section -->
     <div v-if="folders.length || files.length">
@@ -59,8 +62,6 @@
             <th>Name</th>
             <th>Parent ID</th>
             <th>Status</th>
-
-
             <th>Actions</th>
           </tr>
         </thead>
@@ -161,11 +162,17 @@
         <h3 class="text-lg font-bold mb-2">Edit File</h3>
         <label class="block mb-2">
           Name:
-          <input v-model="fileToEdit.file.name" class="border p-2 mb-2 w-full" />
+          <input
+            v-model="fileToEdit.file.name"
+            class="border p-2 mb-2 w-full"
+          />
         </label>
         <label class="block mb-2">
           Type:
-          <input v-model="fileToEdit.file.type" class="border p-2 mb-2 w-full" />
+          <input
+            v-model="fileToEdit.file.type"
+            class="border p-2 mb-2 w-full"
+          />
         </label>
         <button @click="updateFile" class="bg-blue-500 text-white p-2 mr-2">
           Save
@@ -229,13 +236,18 @@ export default {
 
     onMounted(fetchFoldersAndFiles);
 
+    // Function to create a new folder
     const createNewFolder = async () => {
+      // Prepare the folder data
       const folderData = {
         name: folderName.value,
         parent_id: parentFolderId.value,
       };
+
+      // Create the new folder
       const newFolder = await createFolder(folderData);
-      console.log("newFolder: ", newFolder);
+
+      // If the new folder has a parent, add it to the parent's children
       if (parentFolderId.value) {
         const parentFolder = findFolderById(
           folders.value,
@@ -243,87 +255,119 @@ export default {
         );
         if (parentFolder) {
           parentFolder.children.push(newFolder);
-          console.log("parentFolder.children: ", parentFolder.children);
         }
       } else {
-        // folders.value.push(newFolder);
-        console.log("before push folders: ", folders.value);
+        // If the new folder doesn't have a parent, add it to the root level
         folders.value = [...folders.value, newFolder.folder];
-        console.log("folders: ", folders.value);
       }
-      flatFolders.value = flattenFolders(folders.value);
-      console.log("flatFolders: ", flatFolders.value);
-      // window.location.reload();
 
+      // Update the flatFolders array and reset the form values
+      flatFolders.value = flattenFolders(folders.value);
       folderName.value = "";
       parentFolderId.value = "";
     };
 
+    // Function to handle file upload
     const handleFileUpload = (event) => {
+      // Store the uploaded file
       selectedFile.value = event.target.files[0];
     };
 
+    // Function to upload a new file
     const uploadNewFile = async () => {
+      // If no file is selected, return
       if (!selectedFile.value) return;
 
+      // Prepare the form data
       const formData = new FormData();
       formData.append("file", selectedFile.value);
       formData.append("name", selectedFile.value.name);
       formData.append("folder_id", selectedFolderId.value);
       formData.append("type", selectedFile.value.type);
 
+      // Upload the file
       const newFile = await uploadFile(formData);
-      // await fetchFiles(); 
+
+      // Add the new file to the files array and reset the form values
       files.value = [...files.value, newFile];
-      console.log("files: ", files.value);
       selectedFile.value = null;
       selectedFolderId.value = "";
     };
 
+    // Function to toggle a folder's open state
     const toggleFolder = (id) => {
+      // Find the folder by id
       const folder = flatFolders.value.find((f) => f.id === id);
+
+      // If the folder is found, toggle its open state
       if (folder) folder.open = !folder.open;
     };
 
+    // Function to edit a folder
     const editFolder = (folder) => {
+      // Store the folder to be edited and show the edit dialog
       folderToEdit.value = { ...folder };
       showFolderEditDialog.value = true;
     };
 
+    // Function to update a folder
     const updateFolder = async () => {
+      // Update the folder and fetch the updated list of folders and files
       await updateFolderService(folderToEdit.value.id, folderToEdit.value);
       await fetchFoldersAndFiles();
+
+      // Hide the edit dialog
       showFolderEditDialog.value = false;
     };
 
+    // Function to edit a file
     const editFile = (file) => {
+      // Store the file to be edited and show the edit dialog
       fileToEdit.value = { ...file };
       showFileEditDialog.value = true;
     };
 
+    // Function to update a file
     const updateFile = async () => {
+      // Update the file and fetch the updated list of folders and files
       await updateFileService(fileToEdit.value.id, fileToEdit.value);
       await fetchFoldersAndFiles();
+
+      // Hide the edit dialog
       showFileEditDialog.value = false;
     };
 
+    // Function to delete a folder
     const deleteFolder = async (id) => {
+      // Delete the folder
       await deleteFolderService(id);
+
+      // Remove the deleted folder from the folders array and update the flatFolders array
       folders.value = folders.value.filter((folder) => folder.id !== id);
       flatFolders.value = flattenFolders(folders.value);
     };
 
+    // Function to delete a file
     const deleteFile = async (id) => {
+      // Delete the file
       await deleteFileService(id);
+
+      // Remove the deleted file from the files array
       files.value = files.value.filter((file) => file.id !== id);
     };
 
+    // Function to flatten the folders array
     const flattenFolders = (folders) => {
       let result = [];
       folders.forEach((folder) => {
+        // Initialize the folder's open state and children array
         folder.open = false;
         folder.children = folder.children || [];
+
+        // Add the folder to the result array
         result.push(folder);
+
+        // If the folder has children, recursively flatten them and add to the result array
         if (folder.children.length) {
           result = result.concat(flattenFolders(folder.children));
         }
@@ -331,15 +375,20 @@ export default {
       return result;
     };
 
+    // Function to find a folder by id
     const findFolderById = (folders, id) => {
       for (const folder of folders) {
+        // If the folder's id matches the given id, return the folder
         if (folder.id === id) return folder;
+
+        // If the folder has children, recursively search them
         const child = findFolderById(folder.children || [], id);
         if (child) return child;
       }
       return null;
     };
 
+    // Return the state and methods
     return {
       folders,
       files,
