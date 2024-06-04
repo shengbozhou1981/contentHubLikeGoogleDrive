@@ -6,6 +6,7 @@ use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class FileController extends Controller
 {
@@ -13,8 +14,12 @@ class FileController extends Controller
     {
         try {
             $files = File::where('user_id', Auth::id())->get();
-            return response()->json(['files' => $files], 200);
+            // Log::info('files:', $files);
+            $response = response()->json(['files' => $files], 200);
+            // Log::info('response:', $response);
+            return $response;
         } catch (\Exception $e) {
+            // Log::error('Failed to fetch files:', $e->getMessage());
             return response()->json(['message' => 'Failed to fetch files'], 500);
         }
     }
@@ -23,7 +28,7 @@ class FileController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:10240', // 最大10MB
+            'file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:10240', // file format allowed and max size 10MB
             'folder_id' => 'nullable|exists:folders,id',
             'type' => 'required|string|max:255',
         ]);
@@ -91,7 +96,7 @@ class FileController extends Controller
             $file = File::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
             Storage::delete($file->path);
             $file->delete();
-            return response()->json(null, 204);
+            return response()->json("Delete file succeed", 204);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to delete file'], 500);
         }

@@ -11,12 +11,13 @@ class FolderController extends Controller
     public function index()
     {
         try {
-            $folders = Folder::where('user_id', Auth::id())->get();
+            $folders = Folder::where('user_id', Auth::id())->with('children')->get();
             return response()->json(['folders' => $folders], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to fetch folders'], 500);
         }
     }
+    
 
     public function store(Request $request)
     {
@@ -40,7 +41,7 @@ class FolderController extends Controller
     public function show($id)
     {
         try {
-            $folder = Folder::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+            $folder = Folder::where('id', $id)->where('user_id', Auth::id())->with('children')->firstOrFail();
             return response()->json(['folder' => $folder], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Folder not found'], 404);
