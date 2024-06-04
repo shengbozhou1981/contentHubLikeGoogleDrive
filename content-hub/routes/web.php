@@ -14,9 +14,9 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
-// Route::get('/all', function () {
-//     return ['Laravel' => app()->version()];
-// });
+Route::get('/', function () {
+    return ['Laravel' => app()->version()];
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
