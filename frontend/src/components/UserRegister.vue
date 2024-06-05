@@ -4,17 +4,35 @@
     <form @submit.prevent="register">
       <div class="form-group">
         <label for="name">Name</label>
-        <input v-model="name" type="text" id="name" required @blur="validateInput" />
+        <input
+          v-model="name"
+          type="text"
+          id="name"
+          required
+          @blur="validateInput"
+        />
         <p v-if="nameError" class="error">{{ nameError }}</p>
       </div>
       <div class="form-group">
         <label for="email">Email</label>
-        <input v-model="email" type="email" id="email" required @blur="validateInput" />
+        <input
+          v-model="email"
+          type="email"
+          id="email"
+          required
+          @blur="validateInput"
+        />
         <p v-if="emailError" class="error">{{ emailError }}</p>
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input v-model="password" type="password" id="password" required @blur="validateInput" />
+        <input
+          v-model="password"
+          type="password"
+          id="password"
+          required
+          @blur="validateInput"
+        />
         <p v-if="passwordError" class="error">{{ passwordError }}</p>
       </div>
       <div class="form-group">
@@ -26,7 +44,9 @@
           required
           @blur="validateInput"
         />
-        <p v-if="passwordConfirmationError" class="error">{{ passwordConfirmationError }}</p>
+        <p v-if="passwordConfirmationError" class="error">
+          {{ passwordConfirmationError }}
+        </p>
       </div>
       <button type="submit">Register</button>
       <p v-if="error" class="error">{{ error }}</p>
@@ -34,9 +54,9 @@
   </div>
 </template>
 
-
 <script>
 import axios from "axios";
+// import { useToast } from "vue-toastification";
 
 export default {
   data() {
@@ -46,16 +66,16 @@ export default {
       password: "",
       password_confirmation: "",
       error: "",
-      nameError: '',
-      emailError: '',
-      passwordError: '',
-      passwordConfirmationError: '',
+      nameError: "",
+      emailError: "",
+      passwordError: "",
+      passwordConfirmationError: "",
     };
   },
   methods: {
     register() {
+      // const toast = useToast();
       axios.get("/sanctum/csrf-cookie").then(() => {
-        console.log("test start...");
         axios
           .post("/register", {
             name: this.name,
@@ -64,12 +84,10 @@ export default {
             password_confirmation: this.password_confirmation,
           })
           .then((response) => {
-            console.log("register callback enter....");
-            console.log("register response is: ", response);
-            if (response.status === 200) {
+            if (response.data) {
               // Handle successful registration, e.g., show success message
               this.errors = {}; // Clear errors
-              localStorage.setItem("user", JSON.stringify(response.data));
+              // toast.success("Registration successful!"); // Show success toast
               this.$router.push("/login"); // Optionally redirect
             } else if (response.status === 400) {
               // Handle invalid request, e.g., show error message
@@ -79,6 +97,7 @@ export default {
               // Handle other status codes, e.g., show error message
               this.errors =
                 "An unexpected error occurred. Please try again later.";
+              // toast.error(this.errors); // Show error toast
             }
           })
           .catch((error) => {
@@ -96,43 +115,42 @@ export default {
     validateInput(event) {
       const inputType = event.target.id;
       switch (inputType) {
-        case 'name':
+        case "name":
           // Simple name validation
           if (this.name.length < 2) {
-            this.nameError = 'Name must be at least 2 characters';
+            this.nameError = "Name must be at least 2 characters";
           } else {
-            this.nameError = '';
+            this.nameError = "";
           }
           break;
-        case 'email': {
+        case "email": {
           // Simple email validation
           const emailRegex = /^\S+@\S+\.\S+$/;
           if (!emailRegex.test(this.email)) {
-            this.emailError = 'Invalid email';
+            this.emailError = "Invalid email";
           } else {
-            this.emailError = '';
+            this.emailError = "";
           }
           break;
         }
-        case 'password':
+        case "password":
           // Simple password validation
           if (this.password.length < 8) {
-            this.passwordError = 'Password must be at least 8 characters';
+            this.passwordError = "Password must be at least 8 characters";
           } else {
-            this.passwordError = '';
+            this.passwordError = "";
           }
           break;
-        case 'password_confirmation':
+        case "password_confirmation":
           // Check if password and confirmation match
           if (this.password !== this.password_confirmation) {
-            this.passwordConfirmationError = 'Passwords do not match';
+            this.passwordConfirmationError = "Passwords do not match";
           } else {
-            this.passwordConfirmationError = '';
+            this.passwordConfirmationError = "";
           }
           break;
       }
     },
-
   },
 };
 </script>
@@ -142,7 +160,7 @@ export default {
   max-width: 800px;
   margin: 50px auto;
   padding: 100px;
-  border: 5px  #ccc;
+  border: 5px #ccc;
   border-radius: 8px;
   box-shadow: 0 0 0px rgba(0, 0, 0, 0.1);
   text-align: left;

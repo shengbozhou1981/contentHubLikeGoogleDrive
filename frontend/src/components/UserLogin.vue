@@ -77,13 +77,12 @@ export default {
           email: this.email,
           password: this.password,
         });
-        console.log("login response is: ", res);
         // Check if the response data indicates a successful login.
-        if (res.data && res.data.user) {
+        if (res.data && res.status === 200) {
           // this.$parent.loggedIn = true;
           // When the login is successful, call the setUser mutation with the user data.
-          this.$store.commit("setUser", res.data.user);
-          localStorage.setItem("user", JSON.stringify(res.data.user));
+          this.$store.commit("setUser", res.data);
+          // localStorage.setItem("user", JSON.stringify(res.data.user));
           this.$router.push("/");
         } else {
           // If the request authentication fails, set an error message to be displayed to the user.
