@@ -18,11 +18,12 @@ export async function getFiles() {
 }
 
 export async function updateFile(id, fileData) {
-    const response = await axios.post(`/api/files/${id}`, fileData);
+    const response = await axios.put(`/api/files/${id}`, fileData);
     return response.data;
 }
 
 export async function deleteFile(id) {
+  console.log("get into deleteFile method");
     const response = await axios.delete(`/api/files/${id}`);
     console.log("delete file response: "+ response.data);
     return response.data;

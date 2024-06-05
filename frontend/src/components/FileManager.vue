@@ -96,11 +96,11 @@
         </thead>
         <tbody>
           <tr v-for="file in files" :key="file.id">
-            <td>{{ file.file.id }}</td>
-            <td>{{ file.file.name }}</td>
-            <td>{{ file.file.user_id }}</td>
-            <td>{{ file.file.type }}</td>
-            <td>{{ file.file.folder_id }}</td>
+            <td>{{ file.id }}</td>
+            <td>{{ file.name }}</td>
+            <td>{{ file.user_id }}</td>
+            <td>{{ file.type }}</td>
+            <td>{{ file.folder_id }}</td>
             <td>
               <button class="button-margin" @click="editFile(file)">
                 Edit
@@ -163,14 +163,14 @@
         <label class="block mb-2">
           Name:
           <input
-            v-model="fileToEdit.file.name"
+            v-model="fileToEdit.name"
             class="border p-2 mb-2 w-full"
           />
         </label>
         <label class="block mb-2">
           Type:
           <input
-            v-model="fileToEdit.file.type"
+            v-model="fileToEdit.type"
             class="border p-2 mb-2 w-full"
           />
         </label>
@@ -200,7 +200,7 @@ import {
   uploadFile,
   updateFile as updateFileService,
   deleteFile as deleteFileService,
-  // getFiles,
+  getFiles,
 } from "@/services/fileService";
 
 export default {
@@ -223,16 +223,16 @@ export default {
       flatFolders.value = flattenFolders(foldersResult);
       folders.value = foldersResult;
 
-      // await fetchFiles();
+      await fetchFiles();
     };
-    // const fetchFiles = async () => {
-    //   const response = await getFiles();
-    //   if (Array.isArray(response)) {
-    //     files.value = response.filter(
-    //       (file) => file && typeof file === "object"
-    //     );
-    //   }
-    // };
+    const fetchFiles = async () => {
+      const response = await getFiles();
+      console.log("response from get files method"+response.files);
+      if (Array.isArray(response.files)) {
+    // 过滤文件数据，确保每个元素是对象
+    files.value = response.files.filter((file) => file && typeof file === "object");
+  }
+    };
 
     onMounted(fetchFoldersAndFiles);
 
@@ -323,6 +323,7 @@ export default {
     // Function to edit a file
     const editFile = (file) => {
       // Store the file to be edited and show the edit dialog
+      console.log("selected file is"+file.name)
       fileToEdit.value = { ...file };
       showFileEditDialog.value = true;
     };
@@ -330,6 +331,7 @@ export default {
     // Function to update a file
     const updateFile = async () => {
       // Update the file and fetch the updated list of folders and files
+      console.log("file to edit is"+fileToEdit.value)
       await updateFileService(fileToEdit.value.id, fileToEdit.value);
       await fetchFoldersAndFiles();
 
@@ -350,6 +352,7 @@ export default {
     // Function to delete a file
     const deleteFile = async (id) => {
       // Delete the file
+      console.log(id);
       await deleteFileService(id);
 
       // Remove the deleted file from the files array
