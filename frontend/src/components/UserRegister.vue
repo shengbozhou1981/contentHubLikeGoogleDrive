@@ -45,7 +45,7 @@ export default {
   methods: {
     register() {
       axios.get("/sanctum/csrf-cookie").then(() => {
-        console.log("test start");
+        console.log("test start...");
         axios
           .post("/register", {
             name: this.name,
@@ -54,14 +54,12 @@ export default {
             password_confirmation: this.password_confirmation,
           })
           .then((response) => {
-            console.log("test....");
-            console.log(response);
+            console.log("register callback enter....");
+            console.log("register response is: ", response);
             if (response.status === 200) {
               // Handle successful registration, e.g., show success message
-              console.log("test....200");
               this.errors = {}; // Clear errors
               localStorage.setItem("user", JSON.stringify(response.data));
-              console.log("test--------");
               this.$router.push("/login"); // Optionally redirect
             } else if (response.status === 400) {
               // Handle invalid request, e.g., show error message

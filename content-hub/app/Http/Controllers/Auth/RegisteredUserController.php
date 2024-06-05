@@ -10,7 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Barryvdh\Debugbar\Facade as Debugbar;
+use Illuminate\Http\JsonResponse;
 
 class RegisteredUserController extends Controller
 {
@@ -32,7 +32,6 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        Debugbar::info($user);
         event(new Registered($user));
 
         Auth::login($user);

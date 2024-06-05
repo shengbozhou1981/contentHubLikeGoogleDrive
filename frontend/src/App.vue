@@ -24,18 +24,24 @@
 </template>
 
 <script>
-import { ref, provide } from "vue";
+import { provide } from "vue";
 import { logout as logoutUser } from "@/services/authService";
 import { useRouter } from "vue-router";
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 
 export default {
   setup() {
+    const store = useStore();
     const router = useRouter();
-    const loggedIn = ref(localStorage.getItem("user") !== null);
+    // Use a Vuex state property instead of localStorage directly.
+    const loggedIn = computed(() => store.state.user !== null);
+
     provide('loggedIn', loggedIn);
 
     const logout = async () => {
       await logoutUser();
+      store.commit('clearUser'); 
       localStorage.removeItem("user");
       loggedIn.value = false;
       router.push("/login");

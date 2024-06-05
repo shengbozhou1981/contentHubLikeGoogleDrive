@@ -227,9 +227,8 @@ export default {
     };
     const fetchFiles = async () => {
       const response = await getFiles();
-      console.log("response from get files method"+response.files);
       if (Array.isArray(response.files)) {
-    // 过滤文件数据，确保每个元素是对象
+    // Filter out any invalid files
     files.value = response.files.filter((file) => file && typeof file === "object");
   }
     };
@@ -287,9 +286,8 @@ export default {
 
       // Upload the file
       const newFile = await uploadFile(formData);
-
       // Add the new file to the files array and reset the form values
-      files.value = [...files.value, newFile];
+      files.value = [...files.value, newFile.file];
       selectedFile.value = null;
       selectedFolderId.value = "";
     };
@@ -323,7 +321,6 @@ export default {
     // Function to edit a file
     const editFile = (file) => {
       // Store the file to be edited and show the edit dialog
-      console.log("selected file is"+file.name)
       fileToEdit.value = { ...file };
       showFileEditDialog.value = true;
     };
@@ -331,7 +328,6 @@ export default {
     // Function to update a file
     const updateFile = async () => {
       // Update the file and fetch the updated list of folders and files
-      console.log("file to edit is"+fileToEdit.value)
       await updateFileService(fileToEdit.value.id, fileToEdit.value);
       await fetchFoldersAndFiles();
 
@@ -352,7 +348,6 @@ export default {
     // Function to delete a file
     const deleteFile = async (id) => {
       // Delete the file
-      console.log(id);
       await deleteFileService(id);
 
       // Remove the deleted file from the files array

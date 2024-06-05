@@ -44,16 +44,18 @@ export default {
       try {
         // First, get the CSRF cookie. This is necessary for Laravel's CSRF protection.
         await axios.get("/sanctum/csrf-cookie");
-        console.log("test start");
         // Then, send a POST request to the /login endpoint with the email and password.
         const res = await axios.post("/login", {
           email: this.email,
           password: this.password,
         });
-
-        if (res.status === 200 || res.status === 204) {
-          this.$parent.loggedIn = true;
-          localStorage.setItem("user", JSON.stringify(res.data));
+        console.log("login response is: ", res);
+        // Check if the response data indicates a successful login.
+        if (res.data && res.data.user) {
+          // this.$parent.loggedIn = true;
+          // When the login is successful, call the setUser mutation with the user data.
+          this.$store.commit("setUser", res.data.user);
+          localStorage.setItem("user", JSON.stringify(res.data.user));
           this.$router.push("/");
         } else {
           // If the request authentication fails, set an error message to be displayed to the user.
@@ -61,7 +63,10 @@ export default {
         }
       } catch (err) {
         // If there's a network error or other error, set an error message to be displayed to the user.
-        this.error = "Some network error occurred, please try again later.";
+        this.error =
+          err.response && err.response.data && err.response.data.message
+            ? err.response.data.message
+            : "Some network error occurred, please try again later.";
       }
     },
   },

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 
@@ -14,8 +15,8 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
-Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+Route::get('/', function (Request $request) {
+    return $request->user();
 });
 
 Route::middleware('auth')->group(function () {

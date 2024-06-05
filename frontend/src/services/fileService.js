@@ -9,7 +9,6 @@ export async function uploadFile(formData) {
 export async function getFiles() {
     try {
     const response = await axios.get('/api/files');
-    console.log("get files response: "+ response.data);
     return response.data;
   } catch (error) {
     console.error('get files error:', error);

@@ -46,7 +46,7 @@ class FileController extends Controller
 
             return response()->json(['file' => $file], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to upload file'], 500);
+            return response()->json(['message' => 'File format not accepted, failed to upload file'], 500);
         }
     }
 
