@@ -4,11 +4,13 @@
     <form @submit.prevent="login">
       <div class="form-group">
         <label for="email">Email</label>
-        <input v-model="email" type="email" id="email" required />
+        <input v-model="email" type="email" id="email" required v-validate="'email'" @blur="validateInput" />
+        <p v-if="emailError" class="error">{{ emailError }}</p>
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input v-model="password" type="password" id="password" required />
+        <input v-model="password" type="password" id="password" required v-validate="'password'" @blur="validateInput" />
+        <p v-if="passwordError" class="error">{{ passwordError }}</p>
       </div>
       <button type="submit">Login</button>
       <p v-if="error" class="error">{{ error }}</p>
@@ -22,6 +24,30 @@ import axios from "axios";
 // import { mapState, mapMutations } from 'vuex';
 
 export default {
+  directives: {
+    validate: {
+      inserted: function (el, binding) {
+        el.addEventListener('input', function () {
+          switch (binding.value) {
+            case 'email':{
+              // Simple email validation
+              const emailRegex = /^\S+@\S+\.\S+$/;
+              if (!emailRegex.test(el.value)) {
+                alert('Invalid email');
+              }
+              break;
+            }
+            case 'password':
+              // Simple password validation
+              if (el.value.length < 8) {
+                alert('Password must be at least 8 characters');
+              }
+              break;
+          }
+        });
+      }
+    }
+  },
   setup() {
     // const loggedIn = inject('loggedIn');
   },
@@ -34,6 +60,8 @@ export default {
       email: "",
       password: "",
       error: "",
+      emailError: '',
+      passwordError: '',
     };
   },
 
@@ -69,18 +97,41 @@ export default {
             : "Some network error occurred, please try again later.";
       }
     },
+    validateInput(event) {
+      const inputType = event.target.id;
+      switch (inputType) {
+        case 'email': {
+          // Simple email validation
+          const emailRegex = /^\S+@\S+\.\S+$/;
+          if (!emailRegex.test(this.email)) {
+            this.emailError = 'Invalid email';
+          } else {
+            this.emailError = '';
+          }
+          break;
+        }
+        case 'password':
+          // Simple password validation
+          if (this.password.length < 8) {
+            this.passwordError = 'Password must be at least 8 characters';
+          } else {
+            this.passwordError = '';
+          }
+          break;
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
 .auth-container {
-  max-width: 400px;
+  max-width: 800px;
   margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
+  padding: 100px;
+  border: 5px  #ccc;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0px rgba(0, 0, 0, 0.1);
   text-align: left;
 }
 h2 {
