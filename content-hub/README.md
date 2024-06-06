@@ -46,4 +46,8 @@ run ```php artisan serve``` to run the application locally
 php artisan serve
 ``` 
 
-4. Now you should be good for the test from the frontend.
+4. Have created some test cases for folder and file test
+   ![alt text](image.png)
+   
+5. Now you should be good for the test from the frontend.
+
