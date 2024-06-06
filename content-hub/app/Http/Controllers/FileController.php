@@ -14,9 +14,7 @@ class FileController extends Controller
     {
         try {
             $files = File::where('user_id', Auth::id())->get();
-            // Log::info('files:', $files);
             $response = response()->json(['files' => $files], 200);
-            // Log::info('response:', $response);
             return $response;
         } catch (\Exception $e) {
             // Log::error('Failed to fetch files:', $e->getMessage());
@@ -40,13 +38,15 @@ class FileController extends Controller
                 'name' => $validatedData['name'],
                 'path' => $path,
                 'type' => $validatedData['type'],
-                'folder_id' => $validatedData['folder_id'],
+                'folder_id' => $validatedData['folder_id'] ?? null,
                 'user_id' => Auth::id(),
             ]);
 
             return response()->json(['file' => $file], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'File format not accepted, failed to upload file'], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
+
+            // return response()->json(['message' => 'File format not accepted, failed to upload file'], 500);
         }
     }
 
@@ -80,13 +80,13 @@ class FileController extends Controller
 
             $file->update([
                 'name' => $validatedData['name'],
-                'folder_id' => $validatedData['folder_id'],
+                'folder_id' => $validatedData['folder_id'] ?? null,
                 'type' => $validatedData['type'],
             ]);
 
             return response()->json(['file' => $file], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to update file'], 500);
+            return response()->json(['message' => 'Failed to update file', 'error' => $e->getMessage()], 500);
         }
     }
 

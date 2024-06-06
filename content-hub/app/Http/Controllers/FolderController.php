@@ -30,11 +30,13 @@ class FolderController extends Controller
             $folder = Folder::create([
                 'name' => $validatedData['name'],
                 'user_id' => Auth::id(),
-                'parent_id' => $validatedData['parent_id'],
+                'parent_id' => $validatedData['parent_id'] ?? null,
             ]);
             return response()->json(['folder' => $folder], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to create folder'], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
+
+            // return response()->json(['message' => 'Failed to create folder'], 500);
         }
     }
 
