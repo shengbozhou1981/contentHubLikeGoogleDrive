@@ -1,5 +1,6 @@
 ## This backend app is developed using Laravel framework.
 ## Project setup 
+Go to content-hub directory and then run the following commands
 
 0. Install Dependencies
 run ```composer install``` 
@@ -16,9 +17,9 @@ or other command tool to install.
 ```
 mv .env.example .env
 ```
-in .env file, you need to update two variables, APP_KEY, DB_DATABASE
-run ```php artisan key:generate``` to create new APP_KEY, it will update the variable automatically
-Modify db directory according to yours: 
+   in .env file, you need to update two variables, APP_KEY, DB_DATABASE
+   run ```php artisan key:generate``` to create new APP_KEY, it will update the variable automatically
+   Modify db directory according to yours: 
 
 ```
 php artisan key:generate

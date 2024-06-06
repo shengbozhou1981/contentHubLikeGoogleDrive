@@ -1,16 +1,16 @@
 # file-management
-
-## Project setup
+Go to frontend directory and run the following commands:
+1. ### Project setup, install all dependencies the project needs
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+2. ### Compiles and hot-reloads for development
 ```
 npm run serve
 ```
 
-### Open browser and go the app running url, you will go to main page and then register new user or login.
+3. ### Open browser and go the app running url, you will go to main page and then register new user or login.
 ```
   App running at:
   - Local:   http://localhost:8080/
