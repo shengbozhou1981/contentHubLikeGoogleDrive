@@ -8,28 +8,29 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
-
+use App\Http\Services\AuthenticatedSessionService;
 
 class AuthenticatedSessionController extends Controller
 {
+    protected $authService;
+
+    public function __construct(AuthenticatedSessionService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     /**
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): JsonResponse
     {
-        $request->authenticate();
-
-        $request->session()->regenerate();
-
-            // Get the currently authenticated user
-        $user = Auth::user();
+        $user = $this->authService->login($request);
 
         // Return a JSON response with the user information
         return response()->json([
             'message' => 'User logged in successfully',
             'user' => $user
         ]);
-
     }
 
     /**
@@ -37,15 +38,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): Response
     {
-        // if (Auth::guard('web')->check()) {
-            Auth::guard('web')->logout();
-    
-            $request->session()->invalidate();
-    
-            $request->session()->regenerateToken();
-        // }
-    
-
+        $this->authService->logout($request);
         return response()->noContent();
     }
 }
