@@ -2,10 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/components/UserLogin.vue';
 import Register from '@/components/UserRegister.vue';
 import FileManager from '@/components/FileManager.vue';
+import TestManagement from '@/components/TestManagement.vue';
 
 const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
+  { path: '/test', component: TestManagement },
   { path: '/', component: FileManager, meta: { requiresAuth: true } }
 ];
 

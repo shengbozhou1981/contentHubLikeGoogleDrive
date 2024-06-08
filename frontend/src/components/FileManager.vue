@@ -61,7 +61,8 @@
             <th>ID</th>
             <th>Name</th>
             <th>Parent ID</th>
-            <th>Status</th>
+            <th>UserId</th>
+            <th>Type</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -70,7 +71,8 @@
             <td>{{ folder.id }}</td>
             <td>{{ folder.name }}</td>
             <td>{{ folder.parent_id }}</td>
-            <td>{{ folder.open ? "Close" : "Open" }}</td>
+            <td>{{ folder.user_id }}</td>            
+            <td>--</td>
             <td>
               <button @click="editFolder(folder)" class="ml-2 text-yellow-500">
                 Edit
@@ -88,9 +90,10 @@
           <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Parent ID</th>
             <th>UserId</th>
             <th>Type</th>
-            <th>FolderId</th>
+
             <th>Actions</th>
           </tr>
         </thead>
@@ -98,9 +101,10 @@
           <tr v-for="file in files" :key="file.id">
             <td>{{ file.id }}</td>
             <td>{{ file.name }}</td>
+            <td>{{ file.folder_id }}</td>
             <td>{{ file.user_id }}</td>
             <td>{{ file.type }}</td>
-            <td>{{ file.folder_id }}</td>
+
             <td>
               <button class="button-margin" @click="editFile(file)">
                 Edit
@@ -283,7 +287,7 @@ export default {
       formData.append("name", selectedFile.value.name);
       formData.append("folder_id", selectedFolderId.value);
       formData.append("type", selectedFile.value.type);
-
+console.log(formData);
       // Upload the file
       const newFile = await uploadFile(formData);
       // Add the new file to the files array and reset the form values

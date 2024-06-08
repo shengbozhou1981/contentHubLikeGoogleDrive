@@ -2,8 +2,10 @@
   <div id="app">
     <header>
       <nav class="nav-bar">
-        <img src="/logo.png" alt="Company Logo" class="logo">
-        <router-link class="nav-item large-font"  to="/">Guard.me Content Hub</router-link>
+        <img src="/logo.png" alt="Company Logo" class="logo" />
+        <router-link class="nav-item large-font" to="/"
+          >Guard.me Content Hub</router-link
+        >
         <div class="nav-right">
           <router-link v-if="!loggedIn" class="nav-item" to="/login"
             >Login</router-link
@@ -20,6 +22,26 @@
     <main>
       <router-view />
     </main>
+
+    <div class="sidebar flex flex-col items-center">
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="show = !show">+ New</button>
+      <ul v-if="show">
+        <li v-for="item in newButtonOptions" :key="item.name">
+          <router-link :to="item.link">
+            <i :class="item.icon"></i>
+            {{ item.name }}
+          </router-link>
+        </li>
+      </ul>
+      <ul>
+        <li v-for="item in navItems" :key="item.name">
+          <router-link :to="item.link">
+            <i :class="item.icon"></i>
+            {{ item.name }}
+          </router-link>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -27,21 +49,54 @@
 import { provide } from "vue";
 import { logout as logoutUser } from "@/services/authService";
 import { useRouter } from "vue-router";
-import { computed } from 'vue';
-import { useStore } from 'vuex';
+import { computed } from "vue";
+import { useStore } from "vuex";
 
 export default {
+  data() {
+    return {
+      show: false,
+      navItems: [
+      { name: "Home", link: "/", icon: "fas fa-hdd" },
+        { name: "My Drive", link: "/", icon: "fas fa-hdd" },
+        { name: "Recent", link: "/recent", icon: "fas fa-clock" },
+        { name: "Trash", link: "/trash", icon: "fas fa-trash" },
+        // Add more nav items here
+        
+      ],
+      newButtonOptions: [
+        { name: "New Folder", link: "/my-drive", icon: "mdi-folder-plus" },
+        { name: "File Upload", link: "/recent", icon: "mdi-file-upload" },
+        { name: "Folder Upload", link: "/trash", icon: "mdi-folder-upload" },
+      ],
+    };
+  },
+  methods: {
+    createNewFolder() {
+      console.log("Creating new folder...");
+      this.show = false;
+    },
+    uploadFile() {
+      console.log("Uploading file...");
+      this.show = false;
+    },
+    uploadFolder() {
+      console.log("Uploading folder...");
+      this.show = false;
+    },
+    // 其他方法
+  },
   setup() {
     const store = useStore();
     const router = useRouter();
     // Use a Vuex state property instead of localStorage directly.
     const loggedIn = computed(() => store.state.user !== null);
 
-    provide('loggedIn', loggedIn);
+    provide("loggedIn", loggedIn);
 
     const logout = async () => {
       await logoutUser();
-      store.commit('clearUser'); 
+      store.commit("clearUser");
       localStorage.removeItem("user");
       loggedIn.value = false;
       router.push("/login");
@@ -65,7 +120,46 @@ export default {
 header {
   background-color: #008000; /* darker background */
   padding: 20px; /* more padding */
+  padding-left: 250px;
   color: white;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 180px;
+  height: 100%;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+
+  align-items: start;
+  margin: 0;
+}
+.sidebar button {
+  /* padding-top: 150px;  */
+} 
+.sidebar li {
+  margin: 20px 0;
+}
+
+.sidebar a {
+  color: #333;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: #007bff;
+}
+
+.sidebar i {
+  margin-right: 10px;
 }
 
 nav a {

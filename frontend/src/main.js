@@ -3,6 +3,9 @@ import App from './App.vue';
 import router from './router';
 import axios from 'axios';
 import store from './store';  // Import your Vuex store
+import '@fortawesome/fontawesome-free/css/all.css'
+import '@mdi/font/css/materialdesignicons.css'
+import './assets/css/main.css'
 
 
 axios.defaults.withCredentials = true;
