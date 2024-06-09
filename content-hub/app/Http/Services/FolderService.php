@@ -9,7 +9,7 @@ class FolderService
 {
     public function getFolders()
     {
-        return Folder::where('user_id', Auth::id())->with('children')->get();
+        return Folder::where('user_id', Auth::id())->with(['children', 'files'])->get();
     }
 
     public function createFolder($data)

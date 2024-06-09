@@ -2,14 +2,14 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from '@/components/UserLogin.vue';
 import Register from '@/components/UserRegister.vue';
 // import FileManager from '@/components/FileManager.vue';
-import TestManagement from '@/components/TestManagement.vue';
+import FileManagement from '@/components/FileManagement.vue';
 import RecentItems from '@/components/RecentItems.vue';
 import DeletedItems from '@/components/DeletedItems.vue';
 
 const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
-  { path: '/', component: TestManagement, meta: { requiresAuth: true }  },
+  { path: '/', component: FileManagement, meta: { requiresAuth: true }  },
   // { path: '/', component: FileManager, meta: { requiresAuth: true } },
   {
     path: '/recent',

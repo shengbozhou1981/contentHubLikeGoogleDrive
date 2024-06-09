@@ -152,14 +152,19 @@ export default {
 </script>
 
 <style scoped>
-.auth-container {
+div {
   max-width: 800px;
-  margin: 50px auto;
-  padding: 100px;
   border: 5px #ccc;
   border-radius: 8px;
   box-shadow: 0 0 0px rgba(0, 0, 0, 0.1);
-  text-align: left;
+  text-align: center;
+  margin: 0 auto; /* Add this line */
+}
+/* Responsive styles */
+@media screen and (max-width: 800px) {
+  .div {
+    padding: 50px;
+  }
 }
 h2 {
   text-align: center;

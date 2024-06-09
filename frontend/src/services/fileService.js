@@ -37,8 +37,8 @@ export async function deleteFile(id) {
   try {
       console.log("get into deleteFile method");
       const response = await axios.delete(`/api/files/${id}`);
-      console.log("delete file response: "+ response.data);
-      return response.data;
+      console.log("delete file response: "+ response);
+      return response;
   } catch (error) {
       console.error(`Failed to delete file: ${error}`);
       return { error };

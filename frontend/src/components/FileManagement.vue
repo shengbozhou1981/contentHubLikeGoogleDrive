@@ -11,20 +11,20 @@
     "
   >
     <h1 class="text-3xl font-bold mb-6 text-center">Welcome to Content Hub</h1>
-    <br>
- 
+    <br />
+
     <!-- Button to trigger options -->
     <div class="mb-4" style="width: 100%; max-width: 300px">
       <button
         @click="showOptions = true"
         class="bg-blue-500 text-white px-6 py-3 text-lg rounded hover:bg-blue-600 w-full"
-        style="width: 100%; padding: 10px; font-size: 26px; cursor: pointer;"
+        style="width: 100%; padding: 10px; font-size: 26px; cursor: pointer"
       >
         + New
       </button>
     </div>
-    <br>
-    <br>
+    <br />
+    <br />
     <!-- Options Dialog/Modal -->
     <div
       v-if="showOptions"
@@ -38,7 +38,7 @@
             showOptions = false;
           "
           class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
+          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
         >
           Create Folder
         </button>
@@ -48,7 +48,7 @@
             showOptions = false;
           "
           class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
+          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
         >
           Upload File
         </button>
@@ -92,23 +92,25 @@
       "
     >
       <!-- add a search icon -->
-      <div style="text-align: center; width: 100%;">
+      <div style="text-align: center; width: 100%">
         <span
           class="mdi mdi-magnify absolute left-3 top-1/2 transform -translate-y-1/2"
-          style="width: 40%; padding: 10px; font-size: 26px; cursor: pointer;"
-          
+          style="width: 40%; padding: 10px; font-size: 26px; cursor: pointer"
         ></span>
         <input
           v-model="searchTerm"
           class="rounded-full px-3"
           type="search"
           placeholder="Search in Drive"
-          style="width: 40%; padding: 10px; font-size: 26px; cursor: pointer;"
+          style="width: 40%; padding: 10px; font-size: 26px; cursor: pointer"
         />
       </div>
 
-      <table class="w-full table-auto" >
-        <thead style="width: 100%; padding: 10px; font-size: 30px; cursor: pointer;">
+      <!-- Folders and files lists -->
+      <table class="w-full table-auto">
+        <thead
+          style="width: 100%; padding: 10px; font-size: 30px; cursor: pointer"
+        >
           <tr
             class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal shadow-md hover:bg-gray-100"
           >
@@ -140,7 +142,10 @@
             <th class="py-3 px-6 text-center">Actions</th>
           </tr>
         </thead>
-        <tbody class="text-gray-600 text-sm font-light" style="width: 100%; padding: 5px; font-size: 25px;">
+        <tbody
+          class="text-gray-600 text-sm font-light"
+          style="width: 100%; padding: 5px; font-size: 25px"
+        >
           <tr
             v-for="item in filteredItems"
             :key="item.id"
@@ -163,7 +168,12 @@
                 v-if="item.type === 'folder'"
                 @click.stop="editFolder(item)"
                 class="text-blue-500 hover:text-blue-700"
-                style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  font-size: 16px;
+                  cursor: pointer;
+                "
               >
                 Edit
               </button>
@@ -173,18 +183,28 @@
                 v-if="item.type === 'file'"
                 @click.stop="editFile(item)"
                 class="text-blue-500 hover:text-blue-700"
-                style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  font-size: 16px;
+                  cursor: pointer;
+                "
               >
                 Edit
               </button>
               <button
                 @click.stop="
-                  item.type === 'folder'
+                  item.type === 'folder' || item.type === 'sub-folder'
                     ? deleteFolder(item.id)
                     : deleteFile(item.id)
                 "
                 class="ml-2 text-red-500 hover:text-red-700"
-                style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  font-size: 16px;
+                  cursor: pointer;
+                "
               >
                 Delete
               </button>
@@ -194,18 +214,6 @@
       </table>
     </div>
 
-    <div>
-      <!-- <vue-upload
-      ref="upload"
-      @input-filter="inputFilter"
-      @uploaded="onFileUploaded"
-      @uploading="onUploading"
-    ></vue-upload>
-    <div v-if="showProgress" class="progress-container">
-      <div class="progress-bar" :style="{ width: progress + '%' }"></div>
-    </div> -->
-    </div>
-
     <!-- Folder Edit Dialog -->
     <div
       v-if="showFolderEditDialog"
@@ -213,7 +221,7 @@
     >
       <div class="bg-white p-4 rounded shadow-md">
         <h2 class="text-lg font-bold mb-2">Edit Folder</h2>
-        <div class="mb-2" >
+        <div class="mb-2">
           <label for="folderName" class="block font-bold mb-1"
             >Folder Name:</label
           >
@@ -221,7 +229,7 @@
             id="folderName"
             v-model="folderToEdit.name"
             class="border p-2 w-full"
-            style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
+            style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
           />
         </div>
         <div class="mb-2">
@@ -232,17 +240,21 @@
             id="parentFolderId"
             v-model="folderToEdit.parent_id"
             class="border p-2 w-full"
-            style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
+            style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
           />
         </div>
-        <button @click="updateFolder" class="bg-blue-500 text-white p-2 mr-2" style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;">
+        <button
+          @click="updateFolder"
+          class="bg-blue-500 text-white p-2 mr-2"
+          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
+        >
           Save
         </button>
-        <br>
+        <br />
         <button
           @click="showFolderEditDialog = false"
           class="bg-gray-500 text-white p-2"
-          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
+          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
         >
           Cancel
         </button>
@@ -262,6 +274,7 @@ import FileUpload from "@/components/FileUpload.vue";
 // import RecentItems from '@/components/RecentItems.vue';
 import {
   getFolders,
+  getFolder as getFolderAPI,
   createFolder,
   updateFolder as updateFolderAPI,
   deleteFolder as deleteFolderAPI,
@@ -329,6 +342,7 @@ export default {
 
     const handleDropOnItem = async (item, event) => {
       event.preventDefault();
+      event.stopPropagation(); 
       const files = event.dataTransfer.files;
       for (let i = 0; i < files.length; i++) {
         const fileData = new FormData();
@@ -344,9 +358,11 @@ export default {
 
     const showCreateDialog = ref(false);
     const showUploadDialog = ref(false);
+
     const searchTerm = ref("");
     const sortField = ref(null);
-    const sortOrder = ref("asc");
+    const sortOrder = ref(null);
+
     const items = ref([]);
     const flatFolders = ref([]);
     // const folderName = ref("");
@@ -374,20 +390,25 @@ export default {
     const rootItems = computed(() => {
       return flatItems.value.filter((item) => item.parent_id == null);
     });
+
     const filteredItems = computed(() => {
       let result = flatItems.value;
 
       if (searchTerm.value) {
+        const lowerCaseSearchTerm = searchTerm.value.toLowerCase();
         result = result.filter((item) => {
           return (
-            String(item.id).includes(searchTerm.value) ||
-            item.name.includes(searchTerm.value) ||
-            String(item.user_id).includes(searchTerm.value) ||
-            String(item.parent_id).includes(searchTerm.value) ||
-            item.type.includes(searchTerm.value)
+            String(item.id).toLowerCase().includes(lowerCaseSearchTerm) ||
+            item.name.toLowerCase().includes(lowerCaseSearchTerm) ||
+            String(item.user_id).toLowerCase().includes(lowerCaseSearchTerm) ||
+            String(item.parent_id)
+              .toLowerCase()
+              .includes(lowerCaseSearchTerm) ||
+            item.type.toLowerCase().includes(lowerCaseSearchTerm)
           );
         });
       }
+
       // add sorting logic
       if (sortField.value) {
         const order = sortOrder.value === "asc" ? 1 : -1;
@@ -415,14 +436,15 @@ export default {
     };
 
     const fetchFoldersAndFiles = async () => {
+      // fetch all the folders from backend
       const foldersResponse = await getFolders();
-      console.log("foldersResponse", foldersResponse);
       folders.value = foldersResponse.folders || [];
       folders.value = folders.value.filter(
         (folder) => folder.parent_id === null
       );
       folders.value.forEach((folder) => (folder.type = "folder"));
 
+      // fetch all files from backend
       const filesResponse = await getFiles();
       files.value = filesResponse.files || [];
       files.value = files.value.filter((file) => file.folder_id === null);
@@ -431,7 +453,6 @@ export default {
       // combine file and folder items
       items.value = [...folders.value, ...files.value];
       flatItems.value = flattenItems(items.value);
-      console.log("flatItems", flatItems.value);
 
       // calculate flatFolders
       flatFolders.value = flattenItems(folders.value);
@@ -452,7 +473,8 @@ export default {
 
         toast.success("Folder created");
       } catch (error) {
-        const userFriendlyMessage = errorMessages[error.status] || 'An unknown error occurred.';
+        const userFriendlyMessage =
+          errorMessages[error.status] || "An unknown error occurred.";
         toast.error(`Folder creation failed: ${userFriendlyMessage}`);
       }
     };
@@ -472,34 +494,39 @@ export default {
         store.dispatch("addRecentItem", folderToEdit.value);
         toast.success("Folder updated");
       } catch (error) {
-        const userFriendlyMessage = errorMessages[error.status] || 'An unknown error occurred.';
+        const userFriendlyMessage =
+          errorMessages[error.status] || "An unknown error occurred.";
         toast.error(`Failed to update folder: ${userFriendlyMessage}`);
       }
     };
 
     const deleteFolder = async (folderId) => {
       try {
-        console.log("delete folder", folderId);
-        await deleteFolderAPI(folderId);
-        const deletedFolder = items.value.find((item) => item.id === folderId);
-        items.value = items.value.filter((item) => item.id !== folderId);
-        folders.value = folders.value.filter(
-          (folder) => folder.id !== folderId
-        );
-        items.value = items.value.filter((item) => item.id !== folderId);
-        flatItems.value = flattenItems(items.value);
-        if (deletedFolder) {
-          state.deletedItems.push(deletedFolder);
-          store.dispatch("addDeletedItem", deletedFolder);
+        // use getFolderAPI to retrieve this folder from backend
+        let response;
+        try {
+          response = await getFolderAPI(folderId);
+          // handle the response data
+        } catch (error) {
+          // handle the error
+          if (error.status === 404) {
+            toast.error(`Folder with id ${folderId} not found.`);
+            return;
+          }
         }
+        await deleteFolderAPI(folderId);
+        await fetchFoldersAndFiles();
+        store.dispatch("addDeletedItem", response);
+
         toast.success("Folder deleted");
       } catch (error) {
-        const userFriendlyMessage = errorMessages[error.status] || 'An unknown error occurred.';
+        const userFriendlyMessage =
+          errorMessages[error.status] || "An unknown error occurred.";
         toast.error(`Failed to delete folder: ${userFriendlyMessage}`);
       }
     };
 
-// files upload and delete and edit methods
+    // files upload and delete and edit methods
     const uploadNewFile = async (fileData) => {
       try {
         const newFileResponse = await uploadFile(fileData, (progress) => {
@@ -515,24 +542,25 @@ export default {
         store.dispatch("addRecentItem", newFile);
         toast.success("File uploaded");
       } catch (error) {
-        const userFriendlyMessage = errorMessages[error.status] || 'An unknown error occurred.';
+        const userFriendlyMessage =
+          errorMessages[error.status] || "An unknown error occurred.";
         toast.error(`Failed to upload file: ${userFriendlyMessage}`);
       }
     };
 
-
     const deleteFile = async (fileId) => {
       try {
-        await deleteFileAPI(fileId);
         const deletedFile = files.value.find((file) => file.id === fileId);
-        files.value = files.value.filter((file) => file.id !== fileId);
-        items.value = items.value.filter((item) => item.id !== fileId);
-        flatItems.value = flattenItems(items.value);
-        if (deletedFile) {
-          state.deletedItems.push(deletedFile);
+        const response = await deleteFileAPI(fileId);
+        console.log("response", response);
+        if (response.status === 200 || response.status === 204) {
+          // state.deletedItems.push(deletedFile);
           store.dispatch("addDeletedItem", deletedFile);
+          await fetchFoldersAndFiles();
+          toast.success("File deleted");
+        } else {
+          toast.error("Failed to delete file");
         }
-        toast.success("File deleted");
       } catch (error) {
         toast.error("Failed to delete file");
       }
@@ -561,17 +589,24 @@ export default {
 
     const sortBy = (key) => {
       if (sortKey.value === key) {
+        console.log("sort 1 key", key);
         sortOrder.value = -sortOrder.value; // sorting
       } else {
+        console.log("sort 2 key", key);
         sortKey.value = key;
         sortOrder.value = 1; // default sorting
       }
     };
 
-    const sortedItems = computed(() => {
-      return flatItems.value.slice().sort((a, b) => {
-        const result = a[sortKey.value] > b[sortKey.value] ? 1 : -1;
-        return result * sortOrder.value;
+    const sortedAndFilteredItems = computed(() => {
+      return filteredItems.value.slice().sort((a, b) => {
+        if (a[sortKey.value] > b[sortKey.value]) {
+          return sortOrder.value;
+        } else if (a[sortKey.value] < b[sortKey.value]) {
+          return -sortOrder.value;
+        } else {
+          return 0;
+        }
       });
     });
 
@@ -619,7 +654,7 @@ export default {
       deleteFile,
       editFile,
       sortBy,
-      sortedItems,
+      sortedAndFilteredItems,
       toggleFolder,
       handleFolderCreated,
       flatFolders,

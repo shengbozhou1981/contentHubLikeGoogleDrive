@@ -19,6 +19,15 @@ export async function getFolders() {
     }
 }
 
+export async function getFolder(id) {
+    try {
+        const response = await axios.get(`/api/folders/${id}`);
+        return response.data;
+    } catch (error) {
+        return { error };
+    }
+}
+
 export async function updateFolder(id, folderData) {
     try {
         const response = await axios.put(`/api/folders/${id}`, folderData);
