@@ -425,7 +425,7 @@ h2 {
 }
 
 div {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 20px auto;
   padding: 20px;
   border: 1px solid #ccc;

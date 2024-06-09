@@ -42,7 +42,6 @@
         formData.append('name', selectedFile.value.name);
         formData.append('folder_id', selectedFolderId.value);
         formData.append('type', selectedFile.value.type);
-        console.log('File Uploaded:', formData);
         emit('uploadFile', formData);
         selectedFile.value = null;
         selectedFolderId.value = '';

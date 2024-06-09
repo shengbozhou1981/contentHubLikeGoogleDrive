@@ -1,12 +1,17 @@
 <template>
-  <div class="container mx-auto p-6 bg-gray-100 min-h-screen">
+  <div
+    class="container mx-auto p-6 bg-gray-100 min-h-screen"
+    @dragover.prevent
+    @drop="handleDrop"
+    style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
+  >
     <h2 class="text-3xl font-bold mb-6 text-center">File Manager</h2>
 
     <!-- Button to trigger options -->
-    <div class="mb-4">
+    <div class="mb-4" style="width: 100%; max-width: 300px;">
       <button
         @click="showOptions = true"
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full"
       >
         + New
       </button>
@@ -18,13 +23,7 @@
       class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-25"
     >
       <div class="bg-white p-4 rounded shadow-md">
-        <button
-          @click="showOptions = false"
-          class="absolute top-0 right-0 m-4 text-gray-600 hover:text-gray-800"
-        >
-          &times;
-        </button>
-        <h3 class="text-lg font-bold mb-4">Choose an Option:</h3>
+        <!-- <h3 class="text-lg font-bold mb-4">Choose an Option:</h3> -->
         <button
           @click="
             showCreateDialog = true;
@@ -42,6 +41,12 @@
           class="block w-full text-left px-4 py-2 hover:bg-gray-100"
         >
           Upload File
+        </button>
+        <button
+          @click="showOptions = false"
+          class="absolute top-0 right-0 m-4 text-gray-600 hover:text-gray-800"
+        >
+          &times;
         </button>
       </div>
     </div>
@@ -63,28 +68,37 @@
       :flat-folders="flatFolders"
     />
     <br />
-    <!-- 添加一个搜索图标 -->
-    <span
-      class="mdi mdi-magnify absolute left-3 top-1/2 transform -translate-y-1/2"
-    ></span>
-    <!-- 添加一个输入框来输入搜索词 -->
-    <input
-      v-model="searchTerm"
-      class="rounded-full px-3"
-      type="search"
-      placeholder="Search in Drive"
-    />
 
     <!-- Folders and Files List Section -->
     <div
-      class="bg-white shadow-md rounded-lg overflow-x-auto"
-      style="display: flex; justify-content: center; align-items: center"
+      class="w-full bg-white shadow-md rounded-lg overflow-x-auto"
+      style="
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      "
     >
-      <table class="min-w-full table-auto border-collapse">
+      <!-- add a search icon -->
+      <div style="text-align: left; width: 100%;">
+        <span
+          class="mdi mdi-magnify absolute left-3 top-1/2 transform -translate-y-1/2"
+        ></span>
+        <input
+          v-model="searchTerm"
+          class="rounded-full px-3"
+          type="search"
+          placeholder="Search in Drive"
+          style="width: calc(100% - 40px); max-width: 300px; margin: 10px 0;"
+
+        />
+      </div>
+      <table class="w-full table-auto">
         <thead>
           <tr
-            class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal shadow-md"
+            class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal shadow-md hover:bg-gray-100"
           >
+            <th class="py-3 px-6 text-left cursor-pointer">Id</th>
             <th
               @click="sortBy('name')"
               class="py-3 px-6 text-left cursor-pointer"
@@ -117,8 +131,13 @@
             v-for="item in filteredItems"
             :key="item.id"
             @click="item.type === 'folder' ? toggleFolder(item) : null"
-            class="border-b border-gray-200 hover:bg-gray-100"
+            class="py-3 px-6 border-b border-gray-200 hover:bg-gray-100"
+            @dragover.prevent
+            @drop="handleDropOnItem(item,$event)"
           >
+            <td class="py-3 px-6 text-left border border-gray-500">
+              {{ item.id }}
+            </td>
             <td class="py-3 px-6 text-left">{{ item.name }}</td>
             <td class="py-3 px-6 text-left">{{ item.user_id }}</td>
             <td class="py-3 px-6 text-left">
@@ -133,6 +152,9 @@
               >
                 Edit
               </button>
+
+              <!-- Folder Edit Dialog -->
+
               <button
                 v-if="item.type === 'file'"
                 @click.stop="editFile(item)"
@@ -155,22 +177,79 @@
         </tbody>
       </table>
     </div>
+
+    <div>
+    <!-- <vue-upload
+      ref="upload"
+      @input-filter="inputFilter"
+      @uploaded="onFileUploaded"
+      @uploading="onUploading"
+    ></vue-upload>
+    <div v-if="showProgress" class="progress-container">
+      <div class="progress-bar" :style="{ width: progress + '%' }"></div>
+    </div> -->
+  </div>
+
+    <!-- Folder Edit Dialog -->
+    <div
+      v-if="showFolderEditDialog"
+      class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center"
+    >
+      <div class="bg-white p-4 rounded shadow-md">
+        <h3 class="text-lg font-bold mb-2">Edit Folder</h3>
+        <div class="mb-2">
+          <label for="folderName" class="block font-bold mb-1"
+            >Folder Name:</label
+          >
+          <input
+            id="folderName"
+            v-model="folderToEdit.name"
+            class="border p-2 w-full"
+          />
+        </div>
+        <div class="mb-2">
+          <label for="parentFolderId" class="block font-bold mb-1"
+            >Parent Folder ID:</label
+          >
+          <input
+            id="parentFolderId"
+            v-model="folderToEdit.parent_id"
+            class="border p-2 w-full"
+          />
+        </div>
+        <button @click="updateFolder" class="bg-blue-500 text-white p-2 mr-2">
+          Save
+        </button>
+        <button
+          @click="showFolderEditDialog = false"
+          class="bg-gray-500 text-white p-2"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+    <progress max="100" :value="uploadProgress"></progress>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, reactive, provide } from "vue";
+import { useStore } from "vuex";
+import { useToast } from "vue-toastification";
+// import VueUploadComponent from "vue-upload-component";
 import FolderForm from "@/components/FolderForm.vue";
 import FileUpload from "@/components/FileUpload.vue";
+// import RecentItems from '@/components/RecentItems.vue';
 import {
   getFolders,
   createFolder,
+  updateFolder as updateFolderAPI,
   deleteFolder as deleteFolderAPI,
 } from "@/services/folderService";
 import {
   getFiles,
   uploadFile,
-  updateFile,
+  updateFile as updateFileAPI,
   deleteFile as deleteFileAPI,
 } from "@/services/fileService";
 
@@ -178,37 +257,100 @@ export default {
   components: {
     FolderForm,
     FileUpload,
+    // VueUploadComponent,
+    // RecentItems,
   },
   data() {
     return {
       showOptions: false,
+      editingFolder: null, //
       // showCreateDialog: false,
       // showUploadDialog: false,
+      newButtonOptions: [
+        { name: "New Folder", link: "/my-drive", icon: "mdi-folder-plus" },
+        { name: "File Upload", link: "/recent", icon: "mdi-file-upload" },
+        { name: "Folder Upload", link: "/trash", icon: "mdi-folder-upload" },
+      ],
+      uploadProgress: 0,
+      showProgress: false,
+      progress: 0,
+      // state: {
+      //   recentItems: []
+      //   // ...
+      // }
     };
   },
-  methods: {},
+  methods: {
+ 
+    onFileUploaded(file) {
+      console.log("File uploaded successfully:", file);
+    },
+    onUploading(progress) {
+    
+      this.showProgress = true;
+      this.progress = progress;
+    },
+  },
   setup() {
+    const store = useStore();
+
+    const toast = useToast();
+
+    const handleDrop = async (event) => {
+      console.log("dropped");
+      event.preventDefault();
+      const files = event.dataTransfer.files;
+      for (let i = 0; i < files.length; i++) {
+        const fileData = new FormData();
+        fileData.append("file", files[i]);
+        fileData.append("name", files[i].name);
+        fileData.append("type", files[i].type);
+        await uploadNewFile(fileData);
+      }
+    };
+
+    const handleDropOnItem = async (item, event) => {
+      event.preventDefault();
+      const files = event.dataTransfer.files;
+      for (let i = 0; i < files.length; i++) {
+        const fileData = new FormData();
+        fileData.append("file", files[i]);
+        if (item.type === "folder") {
+          fileData.append("folder_id", item.id);
+          fileData.append("name", files[i].name);
+          fileData.append("type", files[i].type);
+        }
+        await uploadNewFile(fileData);
+      }
+    };
+
     const showCreateDialog = ref(false);
     const showUploadDialog = ref(false);
     const searchTerm = ref("");
-    const sortField = ref(null); // 添加这行
-    const sortOrder = ref("asc"); // 添加这行
-    const items = ref([]); // 包含文件夹和文件的列表
+    const sortField = ref(null); 
+    const sortOrder = ref("asc"); 
+    const items = ref([]); 
     const flatFolders = ref([]);
     // const folderName = ref("");
     // const parentFolderId = ref("");
-    const flatItems = ref([]); // 扁平化后的列表，用于展示
-    const folders = ref([]); // 仅文件夹列表
-    const files = ref([]); // 仅文件列表
+    const flatItems = ref([]); // flatted items
+    const folders = ref([]); // only folder list
+    const files = ref([]); // only file list
     const sortKey = ref("name");
-
+    // const editingFolder = ref(null);
+    const showFolderEditDialog = ref(false);
+    const folderToEdit = ref(null);
+    const rootItems = computed(() => {
+      // 
+      return flatItems.value.filter((item) => item.parent_id == null);
+    });
     const filteredItems = computed(() => {
       let result = flatItems.value;
 
       if (searchTerm.value) {
         result = result.filter((item) => {
-          // 根据你的需求修改这里的条件
           return (
+            String(item.id).includes(searchTerm.value) ||
             item.name.includes(searchTerm.value) ||
             String(item.user_id).includes(searchTerm.value) ||
             String(item.parent_id).includes(searchTerm.value) ||
@@ -216,8 +358,7 @@ export default {
           );
         });
       }
-
-      // 添加排序逻辑
+      // add sorting logic
       if (sortField.value) {
         const order = sortOrder.value === "asc" ? 1 : -1;
         result = result.sort((a, b) => {
@@ -233,13 +374,13 @@ export default {
 
       return result;
     });
+    const state = reactive({
+      recentItems: [],
+      deletedItems: [],
+   
+    });
+    provide("state", state);
 
-    // const sortedItems = computed(() => {
-    //   return flatItems.value.slice().sort((a, b) => {
-    //     const result = a[sortKey.value] > b[sortKey.value] ? 1 : -1;
-    //     return result * sortOrder.value;
-    //   });
-    // });
 
     const handleFolderCreated = () => {
       showCreateDialog.value = false;
@@ -247,68 +388,145 @@ export default {
 
     const fetchFoldersAndFiles = async () => {
       const foldersResponse = await getFolders();
-
+      console.log("foldersResponse", foldersResponse);
       folders.value = foldersResponse.folders || [];
-
+      folders.value = folders.value.filter(
+        (folder) => folder.parent_id === null
+      );
       folders.value.forEach((folder) => (folder.type = "folder"));
+
       const filesResponse = await getFiles();
       files.value = filesResponse.files || [];
+      files.value = files.value.filter((file) => file.folder_id === null);
       files.value.forEach((file) => (file.type = "file"));
 
-      // 将文件夹和文件合并到一个列表中
+      // folders.value.forEach((folder) => {
+      //   addFilesToFolder(folder, files.value);
+      // });
+
+      // combine file and folder items
       items.value = [...folders.value, ...files.value];
       flatItems.value = flattenItems(items.value);
+      console.log("flatItems", flatItems.value);
 
-      // 计算 flatFolders
+      // calculate flatFolders
       flatFolders.value = flattenItems(folders.value);
     };
 
     const createNewFolder = async (folderData) => {
-      const newFolderResponse = await createFolder(folderData);
-      const newFolder = newFolderResponse.folder;
-      newFolder.type = "folder";
-      folders.value.push(newFolder);
-      items.value.push(newFolder);
-      flatItems.value = flattenItems(items.value);
-      flatFolders.value.push(newFolder);
-      showCreateDialog.value = false;
+      try {
+        const newFolderResponse = await createFolder(folderData);
+        const newFolder = newFolderResponse.folder;
+        newFolder.type = "folder";
+        folders.value.push(newFolder);
+        items.value.push(newFolder);
+        flatItems.value = flattenItems(items.value);
+        flatFolders.value.push(newFolder);
+        showCreateDialog.value = false;
+        // add to recent items
+        store.dispatch("addRecentItem", newFolder);
+
+        toast.success("Folder created");
+      } catch (error) {
+        toast.error("Folder creation failed");
+      }
+    };
+    // const editFolder = (item) => {
+    //   console.log("edit folder", item);
+    //   // editingFolder.value = { ...item };
+    // };
+    // const updateFolder = async () => {
+    //   // Update the folder and fetch the updated list of folders and files
+    //   // await updateFolderAPI(editingFolder.value.name, editingFolder.value);
+    //   await fetchFoldersAndFiles();
+    // };
+    const editFolder = (folder) => {
+      // Store the folder to be edited and show the edit dialog
+      folderToEdit.value = { ...folder };
+      showFolderEditDialog.value = true;
+    };
+
+    // Function to update a folder
+    const updateFolder = async () => {
+      try {
+        await updateFolderAPI(folderToEdit.value.id, folderToEdit.value);
+        await fetchFoldersAndFiles();
+        showFolderEditDialog.value = false;
+        store.dispatch("addRecentItem", folderToEdit.value);
+        toast.success("Folder updated");
+      } catch (error) {
+        toast.error("Failed to update folder");
+      }
     };
 
     const uploadNewFile = async (fileData) => {
-      console.log("upload file", fileData);
-      const newFileResponse = await uploadFile(fileData);
-      const newFile = newFileResponse.file;
-      newFile.type = "file";
-      files.value.push(newFile);
-      items.value.push(newFile);
-      flatItems.value = flattenItems(items.value);
-      showUploadDialog.value = false;
+      try {
+        console.log("upload file", fileData);
+        const newFileResponse = await uploadFile(fileData,(progress) => {
+      this.uploadProgress = progress;
+    });
+    // const newFileResponse = await uploadFile(fileData,this.onUploading);
+        const newFile = newFileResponse.file;
+        newFile.type = "file";
+        files.value.push(newFile);
+        items.value.push(newFile);
+        flatItems.value = flattenItems(items.value);
+        showUploadDialog.value = false;
+        store.dispatch("addRecentItem", newFile);
+        toast.success("File uploaded");
+      } catch (error) {
+        toast.error("Failed to upload file");
+      }
     };
 
     const deleteFolder = async (folderId) => {
-      console.log("delete folder", folderId);
-      await deleteFolderAPI(folderId);
-      folders.value = folders.value.filter((folder) => folder.id !== folderId);
-      items.value = items.value.filter((item) => item.id !== folderId);
-      flatItems.value = flattenItems(items.value);
+      try {
+        console.log("delete folder", folderId);
+        await deleteFolderAPI(folderId);
+        const deletedFolder = items.value.find((item) => item.id === folderId);
+        items.value = items.value.filter((item) => item.id !== folderId);
+        folders.value = folders.value.filter(
+          (folder) => folder.id !== folderId
+        );
+        items.value = items.value.filter((item) => item.id !== folderId);
+        flatItems.value = flattenItems(items.value);
+        if (deletedFolder) {
+          state.deletedItems.push(deletedFolder);
+          store.dispatch("addDeletedItem", deletedFolder);
+        }
+        console.log("deletedItems", state.deletedItems);
+        toast.success("Folder deleted");
+      } catch (error) {
+        toast.error("Failed to delete folder");
+      }
     };
 
     const deleteFile = async (fileId) => {
-      await deleteFileAPI(fileId);
-      files.value = files.value.filter((file) => file.id !== fileId);
-      items.value = items.value.filter((item) => item.id !== fileId);
-      flatItems.value = flattenItems(items.value);
+      try {
+        await deleteFileAPI(fileId);
+        const deletedFile = files.value.find((file) => file.id === fileId);
+        files.value = files.value.filter((file) => file.id !== fileId);
+        items.value = items.value.filter((item) => item.id !== fileId);
+        flatItems.value = flattenItems(items.value);
+        if (deletedFile) {
+          state.deletedItems.push(deletedFile);
+          store.dispatch("addDeletedItem", deletedFile);
+        }
+        toast.success("File deleted");
+      } catch (error) {
+        toast.error("Failed to delete file");
+      }
     };
-
     const editFile = async (file) => {
-      // 模拟文件编辑的逻辑，例如弹出一个编辑框来修改文件名
+      // 
+      console.log("edit file", file.id);
       const newName = prompt("Enter new file name", file.name);
       if (newName && newName !== file.name) {
         const updatedFile = { ...file, name: newName };
-        const updatedFileResponse = await updateFile(updatedFile);
+        const updatedFileResponse = await updateFileAPI(file.id, updatedFile);
         const updatedFileData = updatedFileResponse.file;
 
-        // 更新前端文件列表
+        // update the file in the files list
         const index = files.value.findIndex((f) => f.id === file.id);
         if (index !== -1) {
           files.value[index] = updatedFileData;
@@ -323,10 +541,10 @@ export default {
 
     const sortBy = (key) => {
       if (sortKey.value === key) {
-        sortOrder.value = -sortOrder.value; // 切换排序顺序
+        sortOrder.value = -sortOrder.value; // sorting
       } else {
         sortKey.value = key;
-        sortOrder.value = 1; // 默认升序
+        sortOrder.value = 1; // default sorting
       }
     };
 
@@ -338,8 +556,10 @@ export default {
     });
 
     const toggleFolder = (folder) => {
-      folder.open = !folder.open; // 切换文件夹的展开状态
-      flatItems.value = flattenItems(items.value); // 更新扁平化列表
+      folder.open = !folder.open; // toggle open state
+      console.log("items", items.value);
+      flatItems.value = flattenItems(items.value); // update flat items
+      console.log("flatItems", flatItems.value);
     };
 
     const flattenItems = (items) => {
@@ -347,13 +567,25 @@ export default {
       items.forEach((item) => {
         result.push(item);
         if (item.type === "folder" && item.open) {
-          // 如果是文件夹且处于展开状态，则将其子项添加到列表中
-          result = result.concat(item.children || []);
+          //  get children and files
+          let children = item.children || [];
+          let files = item.files || [];
+
+          // update children type to 'sub-folder'
+          children = children.map((child) => ({
+            ...child,
+            type: "sub-folder",
+          }));
+
+          // update files type to 'sub-file'
+          files = files.map((file) => ({ ...file, type: "sub-file" }));
+
+          result = result.concat(children).concat(files);
         }
       });
       return result;
     };
-
+    // provide('state', state);
     onMounted(fetchFoldersAndFiles);
 
     return {
@@ -365,7 +597,7 @@ export default {
       uploadNewFile,
       deleteFolder,
       deleteFile,
-      editFile, // 确保在返回对象中包括 editFile
+      editFile, 
       sortBy,
       sortedItems,
       toggleFolder,
@@ -375,42 +607,77 @@ export default {
       showUploadDialog,
       searchTerm,
       filteredItems,
-      sortField, // 添加这行
-      sortOrder, // 添加这行
+      rootItems,
+      sortField, 
+      sortOrder, 
+      showFolderEditDialog,
+      folderToEdit,
+      editFolder,
+      updateFolder,
+      state,
+      handleDrop,
+      handleDropOnItem,
     };
   },
 };
 </script>
 
 <style scoped>
-.container {
-  /* 增加一些内边距 */
-  padding: 2em;
-}
 
-h2 {
-  /* 增加一些边距 */
-  margin-bottom: 1em;
+@media screen and (min-width: 768px) {
+  .container {
+    /* set big padding for large screen */
+    padding: 40px;
+  }
 }
-
-.mb-6 {
-  /* 增加一些边距 */
-  margin-bottom: 1em;
+tbody tr:hover {
+  background-color: #f3f4f6 !important; 
 }
-
-.bg-white {
-  /* 增加一些内边距 */
-  padding: 1em;
-}
-
-table {
-  /* 增加一些边距 */
-  margin: 1em 0;
-}
-
 th,
 td {
-  /* 增加一些内边距 */
   padding: 3em;
 }
+.container {
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+}
+
+.container.dragging {
+  border-color: #000;
+}
+.progress-container {
+  width: 100%;
+  height: 20px;
+  background-color: #f0f0f0;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #007bff;
+}
+/* div {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: left;
+} */
+
+/* button {
+  padding: 12px 20px;
+  background-color: #9b9c9b;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-left: 20px; 
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+} */
 </style>

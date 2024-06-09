@@ -2,9 +2,25 @@
 import axios from 'axios';
 
 export async function uploadFile(formData) {
-    const response = await axios.post('/api/files', formData);
+  try {
+    const response = await axios.post('/api/files', formData, {
+      onUploadProgress: function(progressEvent) {
+        self.uploadProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+      }
+    });
     return response.data;
+    // const response = await axios.post('/api/files', formData, {
+    //   onUploadProgress: function(progressEvent) {
+    //     const uploadProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+    //     // 调用传入的 onProgressCallback 函数，并传递上传进度
+    //     onProgressCallback(uploadProgress);
+    //   }
+    // });
+    // return response.data;  
+  } catch (error) {
+    console.error(error);
   }
+}
 
 export async function getFiles() {
     try {

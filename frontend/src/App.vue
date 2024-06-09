@@ -3,9 +3,17 @@
     <header>
       <nav class="nav-bar">
         <img src="/logo.png" alt="Company Logo" class="logo" />
-        <router-link class="nav-item large-font" to="/"
-          >Guard.me Content Hub</router-link
+        <component
+          v-for="item in navItems"
+          :key="item.name"
+          :is="item.link.startsWith('http') ? 'a' : 'router-link'"
+          :to="item.link.startsWith('http') ? undefined : item.link"
+          :href="item.link.startsWith('http') ? item.link : undefined"
+          class="block"
         >
+          <i :class="item.icon"></i>
+          {{ item.name }}
+        </component>
         <div class="nav-right">
           <router-link v-if="!loggedIn" class="nav-item" to="/login"
             >Login</router-link
@@ -23,25 +31,7 @@
       <router-view />
     </main>
 
-    <div class="sidebar flex flex-col items-center">
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="show = !show">+ New</button>
-      <ul v-if="show">
-        <li v-for="item in newButtonOptions" :key="item.name">
-          <router-link :to="item.link">
-            <i :class="item.icon"></i>
-            {{ item.name }}
-          </router-link>
-        </li>
-      </ul>
-      <ul>
-        <li v-for="item in navItems" :key="item.name">
-          <router-link :to="item.link">
-            <i :class="item.icon"></i>
-            {{ item.name }}
-          </router-link>
-        </li>
-      </ul>
-    </div>
+
   </div>
 </template>
 
@@ -57,17 +47,11 @@ export default {
     return {
       show: false,
       navItems: [
-      { name: "Home", link: "/", icon: "fas fa-hdd" },
+        { name: "Home", link: "https://www.guard.me/", icon: "fas fa-hdd" },
         { name: "My Drive", link: "/", icon: "fas fa-hdd" },
         { name: "Recent", link: "/recent", icon: "fas fa-clock" },
         { name: "Trash", link: "/trash", icon: "fas fa-trash" },
         // Add more nav items here
-        
-      ],
-      newButtonOptions: [
-        { name: "New Folder", link: "/my-drive", icon: "mdi-folder-plus" },
-        { name: "File Upload", link: "/recent", icon: "mdi-file-upload" },
-        { name: "Folder Upload", link: "/trash", icon: "mdi-folder-upload" },
       ],
     };
   },
@@ -120,7 +104,6 @@ export default {
 header {
   background-color: #008000; /* darker background */
   padding: 20px; /* more padding */
-  padding-left: 250px;
   color: white;
 }
 
@@ -142,9 +125,7 @@ header {
   align-items: start;
   margin: 0;
 }
-.sidebar button {
-  /* padding-top: 150px;  */
-} 
+
 .sidebar li {
   margin: 20px 0;
 }
@@ -198,7 +179,7 @@ main {
 }
 
 .nav-item {
-  margin-right: 10px;
+  margin-right: 15px;
 }
 
 .large-font {
