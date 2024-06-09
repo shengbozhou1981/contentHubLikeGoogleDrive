@@ -689,7 +689,7 @@ tbody tr:hover {
 }
 th,
 td {
-  padding: 3em;
+  padding: 1.5em;
 }
 .container {
   border: 2px dashed #ccc;
