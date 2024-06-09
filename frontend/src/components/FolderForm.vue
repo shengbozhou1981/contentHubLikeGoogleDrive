@@ -1,16 +1,17 @@
 <template>
-  <div>
+  <div v-if="showOptions">
     <label for="folderName" class="text-lg">Folder Name:</label>
     <input
       id="folderName"
       v-model="folderName"
       placeholder="New Folder Name"
       class="p-2 text-lg w-full"
-      style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
+      style="width: 93%; padding: 10px; font-size: 16px; text-align: left;"
     />
 <br>
+<br>
     <label for="parentFolderId" class="text-lg">Parent Folder:</label>
-    <select id="parentFolderId" v-model="parentFolderId" class="p-2 text-lg w-full" style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;">
+    <select id="parentFolderId" v-model="parentFolderId" class="p-2 text-lg w-full" style="width: 100%; padding: 10px; font-size: 16px; text-align: left;">
       <option value="">Select a folder</option>
       <option
         v-for="folder in flatFolders"
@@ -21,7 +22,9 @@
       </option>
     </select>
 <br>
-    <button  @click="createNewFolder" class="p-2 text-lg bg-blue-500 text-white mt-4" style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;">Create Folder</button>
+<br>
+    <button  @click="createNewFolder" class="p-2 text-lg bg-blue-500 text-white mt-4" style="width: 50%; padding: 10px; font-size: 16px; text-align: center;">Create Folder</button>
+    <button @click="$emit('updateShowOptions', false)" class="p-2 text-lg bg-red-500 text-white mt-4" style="width: 50%; padding: 10px; font-size: 16px; text-align: center;">Cancel</button>
   </div>
 </template>
 
@@ -29,7 +32,8 @@
 import { ref } from 'vue';
 
 export default {
-  props: ['flatFolders'],
+
+  props: ['flatFolders','showOptions'],
   setup(props, { emit }) {
     const folderName = ref('');
     const parentFolderId = ref('');
@@ -60,15 +64,9 @@ div {
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+div label {
   text-align: left;
 }
-/* button {
-  width: 100%;
-  padding: 10px;
-  background-color: #42b983;
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-} */
 </style>

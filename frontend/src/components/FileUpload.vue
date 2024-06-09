@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="showOptions">
       <label for="fileUpload">Upload File:</label>
       <input id="fileUpload" style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;" type="file" @change="handleFileUpload"/>
       <br>
@@ -17,7 +17,9 @@
       <br>
       <br>
       
-      <button @click="uploadNewFile" style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;">Upload File</button>
+      <button @click="uploadNewFile" style="width: 50%; padding: 10px; font-size: 16px; cursor: pointer;">Upload File</button>
+      <button @click="$emit('updateShowOptions', false)" class="p-2 text-lg bg-red-500 text-white mt-4" style="width: 50%; padding: 10px; font-size: 16px; text-align: center;">Cancel</button>
+
     </div>
   </template>
   
@@ -25,9 +27,7 @@
   import { ref } from 'vue';
   
   export default {
-    props: {
-      flatFolders: Array,
-    },
+    props: ['flatFolders','showOptions'],
     setup(props, { emit }) {
       const selectedFile = ref(null);
       const selectedFolderId = ref('');

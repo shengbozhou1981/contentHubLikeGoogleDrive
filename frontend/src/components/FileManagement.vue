@@ -18,7 +18,7 @@
       <button
         @click="showOptions = true"
         class="bg-blue-500 text-white px-6 py-3 text-lg rounded hover:bg-blue-600 w-full"
-        style="width: 100%; padding: 10px; font-size: 26px; cursor: pointer"
+        style="width: 50%; padding: 10px; font-size: 26px; cursor: pointer"
       >
         + New
       </button>
@@ -68,6 +68,8 @@
       @folderCreated="handleFolderCreated"
       @createFolder="createNewFolder"
       :flat-folders="flatFolders"
+      :showOptions="showCreateDialog"
+      @updateShowOptions="showCreateDialog = $event"
       class="w-full h-full"
     />
 
@@ -77,6 +79,8 @@
       @close="showUploadDialog = false"
       @uploadFile="uploadNewFile"
       :flat-folders="flatFolders"
+      :showOptions="showUploadDialog"
+      @updateShowOptions="showUploadDialog = $event"
       class="w-full h-full"
     />
     <br />
@@ -274,7 +278,7 @@ import FileUpload from "@/components/FileUpload.vue";
 // import RecentItems from '@/components/RecentItems.vue';
 import {
   getFolders,
-  getFolder as getFolderAPI,
+  // getFolder as getFolderAPI,
   createFolder,
   updateFolder as updateFolderAPI,
   deleteFolder as deleteFolderAPI,
@@ -342,7 +346,7 @@ export default {
 
     const handleDropOnItem = async (item, event) => {
       event.preventDefault();
-      event.stopPropagation(); 
+      event.stopPropagation();
       const files = event.dataTransfer.files;
       for (let i = 0; i < files.length; i++) {
         const fileData = new FormData();
@@ -439,9 +443,9 @@ export default {
       // fetch all the folders from backend
       const foldersResponse = await getFolders();
       folders.value = foldersResponse.folders || [];
-      folders.value = folders.value.filter(
-        (folder) => folder.parent_id === null
-      );
+      // folders.value = folders.value.filter(
+      //   (folder) => folder.parent_id === null
+      // );
       folders.value.forEach((folder) => (folder.type = "folder"));
 
       // fetch all files from backend
@@ -502,23 +506,34 @@ export default {
 
     const deleteFolder = async (folderId) => {
       try {
-        // use getFolderAPI to retrieve this folder from backend
-        let response;
-        try {
-          response = await getFolderAPI(folderId);
-          // handle the response data
-        } catch (error) {
-          // handle the error
-          if (error.status === 404) {
-            toast.error(`Folder with id ${folderId} not found.`);
-            return;
+        // // use getFolderAPI to retrieve this folder from backend
+        // let response;
+        // try {
+        //   response = await getFolderAPI(folderId);
+        //   // handle the response data
+        // } catch (error) {
+        //   // handle the error
+        //   if (error.status === 404) {
+        //     toast.error(`Folder with id ${folderId} not found.`);
+        //     return;
+        //   }
+        // }
+        const deletedFolder = flatItems.value.find(
+          (item) => item.id === folderId && (item.type === "folder" || item.type === "sub-folder")
+        );
+        //according to deletedFolder to check and run following actions
+        if (deletedFolder) {
+          try {
+            await deleteFolderAPI(folderId);
+            await fetchFoldersAndFiles();
+            store.dispatch("addDeletedItem", deletedFolder);
+            toast.success("Folder deleted");
+          } catch (error) {
+            toast.error("Error deleting folder：", error);
           }
+        }else {
+          toast.error("Folder not found");
         }
-        await deleteFolderAPI(folderId);
-        await fetchFoldersAndFiles();
-        store.dispatch("addDeletedItem", response);
-
-        toast.success("Folder deleted");
       } catch (error) {
         const userFriendlyMessage =
           errorMessages[error.status] || "An unknown error occurred.";
@@ -629,7 +644,7 @@ export default {
           // update children type to 'sub-folder'
           children = children.map((child) => ({
             ...child,
-            type: "sub-folder",
+            type: "folder",
           }));
 
           // update files type to 'sub-file'
@@ -689,7 +704,7 @@ tbody tr:hover {
 }
 th,
 td {
-  padding: 1.5em;
+  padding: 1em;
 }
 .container {
   border: 2px dashed #ccc;
