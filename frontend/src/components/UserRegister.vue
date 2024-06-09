@@ -1,62 +1,70 @@
 <template>
-  <div class="auth-container">
-    <h2>Register</h2>
-    <form @submit.prevent="register">
-      <div class="form-group">
-        <label for="name">Name</label>
+  <div class="min-w-xl mx-auto p-24 border-5 border-gray-300 rounded-lg shadow-sm text-left">
+    <h2 class="text-center mb-5">Register</h2>
+    <form @submit.prevent="register" class="space-y-4">
+      <div class="max-w-md mx-auto">
+        <label for="name" class="block mb-2">Name</label>
         <input
           v-model="name"
           type="text"
           id="name"
           required
           @blur="validateInput"
+          class="w-full p-2 border rounded"
         />
-        <p v-if="nameError" class="error">{{ nameError }}</p>
+        <p v-if="nameError" class="mt-2 text-center text-red-500">{{ nameError }}</p>
       </div>
-      <div class="form-group">
-        <label for="email">Email</label>
+      <br>
+      <div class="max-w-md mx-auto">
+        <label for="email" class="block mb-2">Email</label>
         <input
           v-model="email"
           type="email"
           id="email"
           required
           @blur="validateInput"
+          class="w-full p-2 border rounded"
         />
-        <p v-if="emailError" class="error">{{ emailError }}</p>
+        <p v-if="emailError" class="mt-2 text-center text-red-500">{{ emailError }}</p>
       </div>
-      <div class="form-group">
-        <label for="password">Password</label>
+      <br>
+      <div class="max-w-md mx-auto">
+        <label for="password" class="block mb-2">Password</label>
         <input
           v-model="password"
           type="password"
           id="password"
           required
           @blur="validateInput"
+          class="w-full p-2 border rounded"
         />
-        <p v-if="passwordError" class="error">{{ passwordError }}</p>
+        <p v-if="passwordError" class="mt-2 text-center text-red-500">{{ passwordError }}</p>
       </div>
-      <div class="form-group">
-        <label for="password_confirmation">Confirm Password</label>
+      <br>
+      <div class="max-w-md mx-auto">
+        <label for="password_confirmation" class="block mb-2">Confirm Password</label>
         <input
           v-model="password_confirmation"
           type="password"
           id="password_confirmation"
           required
           @blur="validateInput"
+          class="w-full p-2 border rounded"
         />
-        <p v-if="passwordConfirmationError" class="error">
+        <p v-if="passwordConfirmationError" class="mt-2 text-center text-red-500">
           {{ passwordConfirmationError }}
         </p>
       </div>
-      <button type="submit">Register</button>
-      <p v-if="error" class="error">{{ error }}</p>
+      <br>
+      <br>
+      <button type="submit" class="w-full py-2 bg-green-500 text-white rounded cursor-pointer hover:bg-green-600">Register</button>
+      <p v-if="error" class="mt-2 text-center text-red-500">{{ error }}</p>
     </form>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-// import { useToast } from "vue-toastification";
 
 export default {
   data() {
@@ -74,7 +82,6 @@ export default {
   },
   methods: {
     register() {
-      // const toast = useToast();
       axios.get("/sanctum/csrf-cookie").then(() => {
         axios
           .post("/register", {
@@ -85,27 +92,20 @@ export default {
           })
           .then((response) => {
             if (response.data) {
-              // Handle successful registration, e.g., show success message
-              this.errors = {}; // Clear errors
-              // toast.success("Registration successful!"); // Show success toast
-              this.$router.push("/login"); // Optionally redirect
+              this.errors = {};
+              this.$router.push("/login");
             } else if (response.status === 400) {
-              // Handle invalid request, e.g., show error message
               this.errors =
                 "Invalid request. Please check your details and try again.";
             } else {
-              // Handle other status codes, e.g., show error message
               this.errors =
                 "An unexpected error occurred. Please try again later.";
-              // toast.error(this.errors); // Show error toast
             }
           })
           .catch((error) => {
             if (error.response && error.response.status === 422) {
-              // Handle validation errors
               this.errors = error.response.data.errors;
             } else {
-              // Handle other errors
               this.errors =
                 "Registration failed. Please check your details and try again.";
             }
@@ -116,7 +116,6 @@ export default {
       const inputType = event.target.id;
       switch (inputType) {
         case "name":
-          // Simple name validation
           if (this.name.length < 2) {
             this.nameError = "Name must be at least 2 characters";
           } else {
@@ -124,7 +123,6 @@ export default {
           }
           break;
         case "email": {
-          // Simple email validation
           const emailRegex = /^\S+@\S+\.\S+$/;
           if (!emailRegex.test(this.email)) {
             this.emailError = "Invalid email";
@@ -134,7 +132,6 @@ export default {
           break;
         }
         case "password":
-          // Simple password validation
           if (this.password.length < 8) {
             this.passwordError = "Password must be at least 8 characters";
           } else {
@@ -142,7 +139,6 @@ export default {
           }
           break;
         case "password_confirmation":
-          // Check if password and confirmation match
           if (this.password !== this.password_confirmation) {
             this.passwordConfirmationError = "Passwords do not match";
           } else {

@@ -48,9 +48,7 @@ export default {
       }
     }
   },
-  setup() {
-    // const loggedIn = inject('loggedIn');
-  },
+  setup() {},
 
   computed: {
     // ...mapState(['user']),
@@ -132,6 +130,12 @@ export default {
   border-radius: 8px;
   box-shadow: 0 0 0px rgba(0, 0, 0, 0.1);
   text-align: left;
+}
+/* Responsive styles */
+@media screen and (max-width: 800px) {
+  .auth-container {
+    padding: 50px;
+  }
 }
 h2 {
   text-align: center;

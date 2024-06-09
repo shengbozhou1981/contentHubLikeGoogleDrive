@@ -1,10 +1,10 @@
 <template>
     <div>
       <label for="fileUpload">Upload File:</label>
-      <input id="fileUpload" type="file" @change="handleFileUpload" />
-  
+      <input id="fileUpload" style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;" type="file" @change="handleFileUpload"/>
+      <br>
       <label for="selectedFolderId">Select Folder:</label>
-      <select id="selectedFolderId" v-model="selectedFolderId">
+      <select id="selectedFolderId" v-model="selectedFolderId" style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;">
         <option value="">Select Folder</option>
         <option
           v-for="folder in flatFolders"
@@ -14,8 +14,10 @@
           {{ folder.name }}
         </option>
       </select>
-  
-      <button @click="uploadNewFile">Upload File</button>
+      <br>
+      <br>
+      
+      <button @click="uploadNewFile" style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;">Upload File</button>
     </div>
   </template>
   
@@ -56,4 +58,23 @@
     },
   };
   </script>
-  
+  <style scoped>
+  div {
+    /* max-width: 800px; */
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+  }
+  /* button {
+    width: 100%;
+    padding: 10px;
+    background-color: #42b983;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  } */
+  </style>

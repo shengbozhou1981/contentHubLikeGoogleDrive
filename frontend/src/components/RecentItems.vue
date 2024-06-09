@@ -3,10 +3,10 @@
       class="bg-white shadow-md rounded-lg overflow-x-auto"
       style="display: flex; flex-direction: column;justify-content: center; align-items: center"
     >
-    <h2>Recently added & modified Folders and Files</h2>
+    <h1>Recently added & modified Folders and Files</h1>
 
       <table class="min-w-full table-auto">
-        <thead>
+        <thead style="width: 100%; padding: 10px; font-size: 30px; cursor: pointer;">
           <tr
             class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal shadow-md hover:bg-gray-100"
           >
@@ -33,7 +33,7 @@
             </th>
           </tr>
         </thead>
-        <tbody class="text-gray-600 text-sm font-light">
+        <tbody class="text-gray-600 text-sm font-light" style="width: 100%; padding: 5px; font-size: 25px;">
           <tr
             v-for="item in recentItems"
             :key="item.id"
@@ -73,7 +73,7 @@ td {
 
   padding: 3em;
 }
-div {
+/* div {
   max-width: 1000px;
   margin: 20px auto;
   padding: 20px;
@@ -81,18 +81,5 @@ div {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: left;
-}
-
-/* button {
-  padding: 12px 20px;
-  background-color: #9b9c9b;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
-  margin-top: 20px;
-  margin-left: 20px; 
-  font-size: 16px;
-  transition: background-color 0.3s ease;
 } */
 </style>

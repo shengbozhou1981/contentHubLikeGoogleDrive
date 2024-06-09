@@ -1,22 +1,30 @@
-<template>
+<template v-if="filteredItems && filteredItems.length">
   <div
     class="container mx-auto p-6 bg-gray-100 min-h-screen"
     @dragover.prevent
     @drop="handleDrop"
-    style="display: flex; flex-direction: column; justify-content: center; align-items: center;"
+    style="
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    "
   >
-    <h2 class="text-3xl font-bold mb-6 text-center">File Manager</h2>
-
+    <h1 class="text-3xl font-bold mb-6 text-center">Welcome to Content Hub</h1>
+    <br>
+ 
     <!-- Button to trigger options -->
-    <div class="mb-4" style="width: 100%; max-width: 300px;">
+    <div class="mb-4" style="width: 100%; max-width: 300px">
       <button
         @click="showOptions = true"
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full"
+        class="bg-blue-500 text-white px-6 py-3 text-lg rounded hover:bg-blue-600 w-full"
+        style="width: 100%; padding: 10px; font-size: 26px; cursor: pointer;"
       >
         + New
       </button>
     </div>
-
+    <br>
+    <br>
     <!-- Options Dialog/Modal -->
     <div
       v-if="showOptions"
@@ -30,6 +38,7 @@
             showOptions = false;
           "
           class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
         >
           Create Folder
         </button>
@@ -39,6 +48,7 @@
             showOptions = false;
           "
           class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
         >
           Upload File
         </button>
@@ -58,6 +68,7 @@
       @folderCreated="handleFolderCreated"
       @createFolder="createNewFolder"
       :flat-folders="flatFolders"
+      class="w-full h-full"
     />
 
     <!-- Upload File Dialog/Modal -->
@@ -66,6 +77,7 @@
       @close="showUploadDialog = false"
       @uploadFile="uploadNewFile"
       :flat-folders="flatFolders"
+      class="w-full h-full"
     />
     <br />
 
@@ -80,21 +92,23 @@
       "
     >
       <!-- add a search icon -->
-      <div style="text-align: left; width: 100%;">
+      <div style="text-align: center; width: 100%;">
         <span
           class="mdi mdi-magnify absolute left-3 top-1/2 transform -translate-y-1/2"
+          style="width: 40%; padding: 10px; font-size: 26px; cursor: pointer;"
+          
         ></span>
         <input
           v-model="searchTerm"
           class="rounded-full px-3"
           type="search"
           placeholder="Search in Drive"
-          style="width: calc(100% - 40px); max-width: 300px; margin: 10px 0;"
-
+          style="width: 40%; padding: 10px; font-size: 26px; cursor: pointer;"
         />
       </div>
-      <table class="w-full table-auto">
-        <thead>
+
+      <table class="w-full table-auto" >
+        <thead style="width: 100%; padding: 10px; font-size: 30px; cursor: pointer;">
           <tr
             class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal shadow-md hover:bg-gray-100"
           >
@@ -126,14 +140,14 @@
             <th class="py-3 px-6 text-center">Actions</th>
           </tr>
         </thead>
-        <tbody class="text-gray-600 text-sm font-light">
+        <tbody class="text-gray-600 text-sm font-light" style="width: 100%; padding: 5px; font-size: 25px;">
           <tr
             v-for="item in filteredItems"
             :key="item.id"
             @click="item.type === 'folder' ? toggleFolder(item) : null"
             class="py-3 px-6 border-b border-gray-200 hover:bg-gray-100"
             @dragover.prevent
-            @drop="handleDropOnItem(item,$event)"
+            @drop="handleDropOnItem(item, $event)"
           >
             <td class="py-3 px-6 text-left border border-gray-500">
               {{ item.id }}
@@ -149,16 +163,17 @@
                 v-if="item.type === 'folder'"
                 @click.stop="editFolder(item)"
                 class="text-blue-500 hover:text-blue-700"
+                style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
               >
                 Edit
               </button>
-
               <!-- Folder Edit Dialog -->
 
               <button
                 v-if="item.type === 'file'"
                 @click.stop="editFile(item)"
                 class="text-blue-500 hover:text-blue-700"
+                style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
               >
                 Edit
               </button>
@@ -169,6 +184,7 @@
                     : deleteFile(item.id)
                 "
                 class="ml-2 text-red-500 hover:text-red-700"
+                style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
               >
                 Delete
               </button>
@@ -179,7 +195,7 @@
     </div>
 
     <div>
-    <!-- <vue-upload
+      <!-- <vue-upload
       ref="upload"
       @input-filter="inputFilter"
       @uploaded="onFileUploaded"
@@ -188,7 +204,7 @@
     <div v-if="showProgress" class="progress-container">
       <div class="progress-bar" :style="{ width: progress + '%' }"></div>
     </div> -->
-  </div>
+    </div>
 
     <!-- Folder Edit Dialog -->
     <div
@@ -196,8 +212,8 @@
       class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center"
     >
       <div class="bg-white p-4 rounded shadow-md">
-        <h3 class="text-lg font-bold mb-2">Edit Folder</h3>
-        <div class="mb-2">
+        <h2 class="text-lg font-bold mb-2">Edit Folder</h2>
+        <div class="mb-2" >
           <label for="folderName" class="block font-bold mb-1"
             >Folder Name:</label
           >
@@ -205,6 +221,7 @@
             id="folderName"
             v-model="folderToEdit.name"
             class="border p-2 w-full"
+            style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
           />
         </div>
         <div class="mb-2">
@@ -215,14 +232,17 @@
             id="parentFolderId"
             v-model="folderToEdit.parent_id"
             class="border p-2 w-full"
+            style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
           />
         </div>
-        <button @click="updateFolder" class="bg-blue-500 text-white p-2 mr-2">
+        <button @click="updateFolder" class="bg-blue-500 text-white p-2 mr-2" style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;">
           Save
         </button>
+        <br>
         <button
           @click="showFolderEditDialog = false"
           class="bg-gray-500 text-white p-2"
+          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer;"
         >
           Cancel
         </button>
@@ -281,12 +301,10 @@ export default {
     };
   },
   methods: {
- 
     onFileUploaded(file) {
       console.log("File uploaded successfully:", file);
     },
     onUploading(progress) {
-    
       this.showProgress = true;
       this.progress = progress;
     },
@@ -327,9 +345,9 @@ export default {
     const showCreateDialog = ref(false);
     const showUploadDialog = ref(false);
     const searchTerm = ref("");
-    const sortField = ref(null); 
-    const sortOrder = ref("asc"); 
-    const items = ref([]); 
+    const sortField = ref(null);
+    const sortOrder = ref("asc");
+    const items = ref([]);
     const flatFolders = ref([]);
     // const folderName = ref("");
     // const parentFolderId = ref("");
@@ -340,8 +358,20 @@ export default {
     // const editingFolder = ref(null);
     const showFolderEditDialog = ref(false);
     const folderToEdit = ref(null);
+
+    const errorMessages = {
+      400: "The request was invalid.",
+      401: "You are not authorized to perform this action.",
+      403: "You do not have permission to access this resource.",
+      404: "The requested resource could not be found.",
+      408: "The request took too long to complete.",
+      500: "There was an internal server error.",
+      502: "There was a problem with the gateway.",
+      503: "The service is currently unavailable.",
+      // Add more error codes/messages as needed
+    };
+
     const rootItems = computed(() => {
-      // 
       return flatItems.value.filter((item) => item.parent_id == null);
     });
     const filteredItems = computed(() => {
@@ -377,10 +407,8 @@ export default {
     const state = reactive({
       recentItems: [],
       deletedItems: [],
-   
     });
     provide("state", state);
-
 
     const handleFolderCreated = () => {
       showCreateDialog.value = false;
@@ -399,10 +427,6 @@ export default {
       files.value = filesResponse.files || [];
       files.value = files.value.filter((file) => file.folder_id === null);
       files.value.forEach((file) => (file.type = "file"));
-
-      // folders.value.forEach((folder) => {
-      //   addFilesToFolder(folder, files.value);
-      // });
 
       // combine file and folder items
       items.value = [...folders.value, ...files.value];
@@ -428,18 +452,11 @@ export default {
 
         toast.success("Folder created");
       } catch (error) {
-        toast.error("Folder creation failed");
+        const userFriendlyMessage = errorMessages[error.status] || 'An unknown error occurred.';
+        toast.error(`Folder creation failed: ${userFriendlyMessage}`);
       }
     };
-    // const editFolder = (item) => {
-    //   console.log("edit folder", item);
-    //   // editingFolder.value = { ...item };
-    // };
-    // const updateFolder = async () => {
-    //   // Update the folder and fetch the updated list of folders and files
-    //   // await updateFolderAPI(editingFolder.value.name, editingFolder.value);
-    //   await fetchFoldersAndFiles();
-    // };
+
     const editFolder = (folder) => {
       // Store the folder to be edited and show the edit dialog
       folderToEdit.value = { ...folder };
@@ -455,27 +472,8 @@ export default {
         store.dispatch("addRecentItem", folderToEdit.value);
         toast.success("Folder updated");
       } catch (error) {
-        toast.error("Failed to update folder");
-      }
-    };
-
-    const uploadNewFile = async (fileData) => {
-      try {
-        console.log("upload file", fileData);
-        const newFileResponse = await uploadFile(fileData,(progress) => {
-      this.uploadProgress = progress;
-    });
-    // const newFileResponse = await uploadFile(fileData,this.onUploading);
-        const newFile = newFileResponse.file;
-        newFile.type = "file";
-        files.value.push(newFile);
-        items.value.push(newFile);
-        flatItems.value = flattenItems(items.value);
-        showUploadDialog.value = false;
-        store.dispatch("addRecentItem", newFile);
-        toast.success("File uploaded");
-      } catch (error) {
-        toast.error("Failed to upload file");
+        const userFriendlyMessage = errorMessages[error.status] || 'An unknown error occurred.';
+        toast.error(`Failed to update folder: ${userFriendlyMessage}`);
       }
     };
 
@@ -494,12 +492,34 @@ export default {
           state.deletedItems.push(deletedFolder);
           store.dispatch("addDeletedItem", deletedFolder);
         }
-        console.log("deletedItems", state.deletedItems);
         toast.success("Folder deleted");
       } catch (error) {
-        toast.error("Failed to delete folder");
+        const userFriendlyMessage = errorMessages[error.status] || 'An unknown error occurred.';
+        toast.error(`Failed to delete folder: ${userFriendlyMessage}`);
       }
     };
+
+// files upload and delete and edit methods
+    const uploadNewFile = async (fileData) => {
+      try {
+        const newFileResponse = await uploadFile(fileData, (progress) => {
+          this.uploadProgress = progress;
+        });
+
+        const newFile = newFileResponse.file;
+        newFile.type = "file";
+        files.value.push(newFile);
+        items.value.push(newFile);
+        flatItems.value = flattenItems(items.value);
+        showUploadDialog.value = false;
+        store.dispatch("addRecentItem", newFile);
+        toast.success("File uploaded");
+      } catch (error) {
+        const userFriendlyMessage = errorMessages[error.status] || 'An unknown error occurred.';
+        toast.error(`Failed to upload file: ${userFriendlyMessage}`);
+      }
+    };
+
 
     const deleteFile = async (fileId) => {
       try {
@@ -518,7 +538,7 @@ export default {
       }
     };
     const editFile = async (file) => {
-      // 
+      //
       console.log("edit file", file.id);
       const newName = prompt("Enter new file name", file.name);
       if (newName && newName !== file.name) {
@@ -597,7 +617,7 @@ export default {
       uploadNewFile,
       deleteFolder,
       deleteFile,
-      editFile, 
+      editFile,
       sortBy,
       sortedItems,
       toggleFolder,
@@ -608,8 +628,8 @@ export default {
       searchTerm,
       filteredItems,
       rootItems,
-      sortField, 
-      sortOrder, 
+      sortField,
+      sortOrder,
       showFolderEditDialog,
       folderToEdit,
       editFolder,
@@ -623,7 +643,6 @@ export default {
 </script>
 
 <style scoped>
-
 @media screen and (min-width: 768px) {
   .container {
     /* set big padding for large screen */
@@ -631,7 +650,7 @@ export default {
   }
 }
 tbody tr:hover {
-  background-color: #f3f4f6 !important; 
+  background-color: #f3f4f6 !important;
 }
 th,
 td {
@@ -657,6 +676,15 @@ td {
 .progress-bar {
   height: 100%;
   background-color: #007bff;
+}
+.button {
+  width: 100%;
+  padding: 10px;
+  background-color: #42b983;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
 }
 /* div {
   max-width: 1000px;
