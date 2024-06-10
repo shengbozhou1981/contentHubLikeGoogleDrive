@@ -136,9 +136,9 @@
       </div>
 
       <!-- Folders and files lists -->
-      <table class="w-full table-auto">
+      <table class="w-full md:w-1/2 lg:w-1/3 table-auto overflow-x-auto">
         <thead
-          style="width: 100%; padding: 10px; font-size: 30px; cursor: pointer"
+          style="padding: 10px; font-size: 30px; cursor: pointer"
         >
           <tr
             class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal shadow-md hover:bg-gray-100"
@@ -327,7 +327,7 @@
       </div>
     </div>
     <!-- <progress max="100" :value="uploadProgress" style="width: 50%; height: 50px;"></progress> -->
-    <div class="progress-container">
+    <div class="progress-container" v-if="isUploading">
       <div
         class="progress-bar"
         :style="{
@@ -425,6 +425,8 @@ export default {
         await uploadNewFile(fileData);
       }
     };
+
+    const isUploading = ref(false);
     const uploadProgress = ref(0);
 
     const showCreateDialog = ref(false);
@@ -600,6 +602,7 @@ export default {
     // files upload and delete and edit methods
     const uploadNewFile = async (fileData) => {
       try {
+        isUploading.value = true;
         const newFileResponse = await uploadFile(fileData, (progress) => {
           console.log("uploadProgress start", uploadProgress.value);
           uploadProgress.value = progress;
@@ -613,6 +616,7 @@ export default {
         showUploadDialog.value = false;
         store.dispatch("addRecentItem", newFile);
         uploadProgress.value = 0;
+        isUploading.value = false;
         console.log("uploadProgress successful", uploadProgress.value);
         toast.success("File uploaded");
       } catch (error) {
@@ -754,6 +758,7 @@ export default {
       handleDrop,
       handleDropOnItem,
       uploadProgress,
+      isUploading,
     };
   },
 };
@@ -774,7 +779,7 @@ td {
   padding: 1em;
 }
 .container {
-  border: 2px dashed #ccc;
+  /* border: 2px dashed #ccc; */
   border-radius: 5px;
   padding: 20px;
   text-align: center;
