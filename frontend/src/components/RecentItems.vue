@@ -4,7 +4,6 @@
       style="display: flex; flex-direction: column;justify-content: center; align-items: center"
     >
     <h1>Recently added & modified Folders and Files</h1>
-
       <table class="min-w-full table-auto">
         <thead style="width: 100%; padding: 10px; font-size: 30px; cursor: pointer;">
           <tr
@@ -70,16 +69,6 @@ tbody tr:hover {
 }
 th,
 td {
-
   padding: 3em;
 }
-/* div {
-  max-width: 1000px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: left;
-} */
 </style>

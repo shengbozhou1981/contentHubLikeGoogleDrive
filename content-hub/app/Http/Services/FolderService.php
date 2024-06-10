@@ -23,6 +23,7 @@ class FolderService
 
     public function getFolder($id)
     {
+        // get all subfolders and files in the specified folder
         return Folder::where('id', $id)->where('user_id', Auth::id())->with('children')->firstOrFail();
     }
 

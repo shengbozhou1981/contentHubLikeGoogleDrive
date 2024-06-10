@@ -116,18 +116,15 @@ export default {
   },
   methods: {
     createNewFolder() {
-      console.log("Creating new folder...");
       this.show = false;
     },
     uploadFile() {
-      console.log("Uploading file...");
       this.show = false;
     },
     uploadFolder() {
-      console.log("Uploading folder...");
       this.show = false;
     },
-    // 其他方法
+    
   },
   setup() {
     const store = useStore();
@@ -165,7 +162,11 @@ main {
 
 footer {
   /* Set the height of the footer based on your needs */
-  height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   background-color: #f5f5f5;
   text-align: center;
 }

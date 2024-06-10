@@ -18,7 +18,13 @@
       <button
         @click="showOptions = true"
         class="bg-blue-500 text-white px-6 py-3 text-lg rounded hover:bg-blue-600 w-full"
-        style="width: 50%; padding: 10px; font-size: 26px; cursor: pointer"
+        style="
+          width: 50%;
+          padding: 10px;
+          font-size: 26px;
+          cursor: pointer;
+          border-radius: 15px;
+        "
       >
         + New
       </button>
@@ -38,17 +44,30 @@
             showOptions = false;
           "
           class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
+          style="
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 15px;
+          "
         >
           Create Folder
         </button>
+        <br />
         <button
           @click="
             showUploadDialog = true;
             showOptions = false;
           "
           class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
+          style="
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 15px;
+          "
         >
           Upload File
         </button>
@@ -99,14 +118,20 @@
       <div style="text-align: center; width: 100%">
         <span
           class="mdi mdi-magnify absolute left-3 top-1/2 transform -translate-y-1/2"
-          style="width: 40%; padding: 10px; font-size: 26px; cursor: pointer"
+          style="width: 40%; padding: 10px; font-size: 40px; cursor: pointer"
         ></span>
         <input
           v-model="searchTerm"
           class="rounded-full px-3"
           type="search"
           placeholder="Search in Drive"
-          style="width: 40%; padding: 10px; font-size: 26px; cursor: pointer"
+          style="
+            width: 40%;
+            padding: 10px;
+            font-size: 26px;
+            cursor: pointer;
+            border-radius: 25px;
+          "
         />
       </div>
 
@@ -118,12 +143,25 @@
           <tr
             class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal shadow-md hover:bg-gray-100"
           >
-            <th class="py-3 px-6 text-left cursor-pointer">Id</th>
+            <th
+              @click="sortBy('id')"
+              class="py-3 px-6 text-left cursor-pointer"
+            >
+              Id
+              <span v-if="sortKey === 'id'">
+                <i v-if="sortOrder === 1" class="fas fa-arrow-up"></i>
+                <i v-else class="fas fa-arrow-down"></i>
+              </span>
+            </th>
             <th
               @click="sortBy('name')"
               class="py-3 px-6 text-left cursor-pointer"
             >
               Name
+              <span v-if="sortKey === 'name'">
+                <i v-if="sortOrder === 1" class="fas fa-arrow-up"></i>
+                <i v-else class="fas fa-arrow-down"></i>
+              </span>
             </th>
             <th
               @click="sortBy('user_id')"
@@ -136,12 +174,20 @@
               class="py-3 px-6 text-left cursor-pointer"
             >
               Parent ID
+              <span v-if="sortKey === 'parent_id'">
+                <i v-if="sortOrder === 1" class="fas fa-arrow-up"></i>
+                <i v-else class="fas fa-arrow-down"></i>
+              </span>
             </th>
             <th
               @click="sortBy('type')"
               class="py-3 px-6 text-left cursor-pointer"
             >
               Type
+              <span v-if="sortKey === 'type'">
+                <i v-if="sortOrder === 1" class="fas fa-arrow-up"></i>
+                <i v-else class="fas fa-arrow-down"></i>
+              </span>
             </th>
             <th class="py-3 px-6 text-center">Actions</th>
           </tr>
@@ -177,12 +223,12 @@
                   padding: 10px;
                   font-size: 16px;
                   cursor: pointer;
+                  border-radius: 15px;
                 "
               >
                 Edit
               </button>
               <!-- Folder Edit Dialog -->
-
               <button
                 v-if="item.type === 'file'"
                 @click.stop="editFile(item)"
@@ -192,6 +238,7 @@
                   padding: 10px;
                   font-size: 16px;
                   cursor: pointer;
+                  border-radius: 15px;
                 "
               >
                 Edit
@@ -208,6 +255,7 @@
                   padding: 10px;
                   font-size: 16px;
                   cursor: pointer;
+                  border-radius: 15px;
                 "
               >
                 Delete
@@ -236,6 +284,7 @@
             style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
           />
         </div>
+        <br />
         <div class="mb-2">
           <label for="parentFolderId" class="block font-bold mb-1"
             >Parent Folder ID:</label
@@ -247,10 +296,17 @@
             style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
           />
         </div>
+        <br />
         <button
           @click="updateFolder"
           class="bg-blue-500 text-white p-2 mr-2"
-          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
+          style="
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 15px;
+          "
         >
           Save
         </button>
@@ -258,13 +314,28 @@
         <button
           @click="showFolderEditDialog = false"
           class="bg-gray-500 text-white p-2"
-          style="width: 100%; padding: 10px; font-size: 16px; cursor: pointer"
+          style="
+            width: 50%;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 15px;
+          "
         >
           Cancel
         </button>
       </div>
     </div>
-    <progress max="100" :value="uploadProgress"></progress>
+    <!-- <progress max="100" :value="uploadProgress" style="width: 50%; height: 50px;"></progress> -->
+    <div class="progress-container">
+      <div
+        class="progress-bar"
+        :style="{
+          width: uploadProgress + '%',
+          transition: 'width 0.5s ease-out',
+        }"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -275,6 +346,7 @@ import { useToast } from "vue-toastification";
 // import VueUploadComponent from "vue-upload-component";
 import FolderForm from "@/components/FolderForm.vue";
 import FileUpload from "@/components/FileUpload.vue";
+// import FileUploadEL from '@/components/FileUpload-EL.vue';
 // import RecentItems from '@/components/RecentItems.vue';
 import {
   getFolders,
@@ -294,29 +366,24 @@ export default {
   components: {
     FolderForm,
     FileUpload,
-    // VueUploadComponent,
-    // RecentItems,
+    // FileUploadEL
   },
+
   data() {
     return {
       showOptions: false,
       editingFolder: null, //
-      // showCreateDialog: false,
-      // showUploadDialog: false,
       newButtonOptions: [
         { name: "New Folder", link: "/my-drive", icon: "mdi-folder-plus" },
         { name: "File Upload", link: "/recent", icon: "mdi-file-upload" },
         { name: "Folder Upload", link: "/trash", icon: "mdi-folder-upload" },
       ],
-      uploadProgress: 0,
-      showProgress: false,
       progress: 0,
-      // state: {
-      //   recentItems: []
-      //   // ...
-      // }
+      sortField: "",
+      sortDirection: "",
     };
   },
+
   methods: {
     onFileUploaded(file) {
       console.log("File uploaded successfully:", file);
@@ -326,13 +393,12 @@ export default {
       this.progress = progress;
     },
   },
+
   setup() {
     const store = useStore();
-
     const toast = useToast();
-
+    // handle file drag-and-drop functions
     const handleDrop = async (event) => {
-      console.log("dropped");
       event.preventDefault();
       const files = event.dataTransfer.files;
       for (let i = 0; i < files.length; i++) {
@@ -359,13 +425,15 @@ export default {
         await uploadNewFile(fileData);
       }
     };
+    const uploadProgress = ref(0);
 
     const showCreateDialog = ref(false);
     const showUploadDialog = ref(false);
 
     const searchTerm = ref("");
     const sortField = ref(null);
-    const sortOrder = ref(null);
+    const sortOrder = ref(1);
+    const sortKey = ref("");
 
     const items = ref([]);
     const flatFolders = ref([]);
@@ -374,7 +442,7 @@ export default {
     const flatItems = ref([]); // flatted items
     const folders = ref([]); // only folder list
     const files = ref([]); // only file list
-    const sortKey = ref("name");
+
     // const editingFolder = ref(null);
     const showFolderEditDialog = ref(false);
     const folderToEdit = ref(null);
@@ -412,7 +480,6 @@ export default {
           );
         });
       }
-
       // add sorting logic
       if (sortField.value) {
         const order = sortOrder.value === "asc" ? 1 : -1;
@@ -426,9 +493,9 @@ export default {
           return 0;
         });
       }
-
       return result;
     });
+
     const state = reactive({
       recentItems: [],
       deletedItems: [],
@@ -472,9 +539,8 @@ export default {
         flatItems.value = flattenItems(items.value);
         flatFolders.value.push(newFolder);
         showCreateDialog.value = false;
-        // add to recent items
+        // add to recent items which will be displayed in the recent items component
         store.dispatch("addRecentItem", newFolder);
-
         toast.success("Folder created");
       } catch (error) {
         const userFriendlyMessage =
@@ -506,20 +572,10 @@ export default {
 
     const deleteFolder = async (folderId) => {
       try {
-        // // use getFolderAPI to retrieve this folder from backend
-        // let response;
-        // try {
-        //   response = await getFolderAPI(folderId);
-        //   // handle the response data
-        // } catch (error) {
-        //   // handle the error
-        //   if (error.status === 404) {
-        //     toast.error(`Folder with id ${folderId} not found.`);
-        //     return;
-        //   }
-        // }
         const deletedFolder = flatItems.value.find(
-          (item) => item.id === folderId && (item.type === "folder" || item.type === "sub-folder")
+          (item) =>
+            item.id === folderId &&
+            (item.type === "folder" || item.type === "sub-folder")
         );
         //according to deletedFolder to check and run following actions
         if (deletedFolder) {
@@ -531,7 +587,7 @@ export default {
           } catch (error) {
             toast.error("Error deleting folder：", error);
           }
-        }else {
+        } else {
           toast.error("Folder not found");
         }
       } catch (error) {
@@ -545,9 +601,10 @@ export default {
     const uploadNewFile = async (fileData) => {
       try {
         const newFileResponse = await uploadFile(fileData, (progress) => {
-          this.uploadProgress = progress;
+          console.log("uploadProgress start", uploadProgress.value);
+          uploadProgress.value = progress;
+          console.log("uploadProgress", uploadProgress.value);
         });
-
         const newFile = newFileResponse.file;
         newFile.type = "file";
         files.value.push(newFile);
@@ -555,6 +612,8 @@ export default {
         flatItems.value = flattenItems(items.value);
         showUploadDialog.value = false;
         store.dispatch("addRecentItem", newFile);
+        uploadProgress.value = 0;
+        console.log("uploadProgress successful", uploadProgress.value);
         toast.success("File uploaded");
       } catch (error) {
         const userFriendlyMessage =
@@ -581,8 +640,7 @@ export default {
       }
     };
     const editFile = async (file) => {
-      //
-      console.log("edit file", file.id);
+      // prompt user to enter new file name for file update
       const newName = prompt("Enter new file name", file.name);
       if (newName && newName !== file.name) {
         const updatedFile = { ...file, name: newName };
@@ -604,13 +662,21 @@ export default {
 
     const sortBy = (key) => {
       if (sortKey.value === key) {
-        console.log("sort 1 key", key);
         sortOrder.value = -sortOrder.value; // sorting
       } else {
-        console.log("sort 2 key", key);
         sortKey.value = key;
         sortOrder.value = 1; // default sorting
       }
+      filteredItems.value.sort((a, b) => {
+        if (a[sortKey.value] < b[sortKey.value]) {
+          return -sortOrder.value;
+        }
+        if (a[sortKey.value] > b[sortKey.value]) {
+          return sortOrder.value;
+        }
+        return 0;
+      });
+      console.log("filteredItems", filteredItems.value);
     };
 
     const sortedAndFilteredItems = computed(() => {
@@ -648,7 +714,7 @@ export default {
           }));
 
           // update files type to 'sub-file'
-          files = files.map((file) => ({ ...file, type: "sub-file" }));
+          files = files.map((file) => ({ ...file, type: "file" }));
 
           result = result.concat(children).concat(files);
         }
@@ -669,6 +735,8 @@ export default {
       deleteFile,
       editFile,
       sortBy,
+      sortKey,
+      sortOrder,
       sortedAndFilteredItems,
       toggleFolder,
       handleFolderCreated,
@@ -678,8 +746,6 @@ export default {
       searchTerm,
       filteredItems,
       rootItems,
-      sortField,
-      sortOrder,
       showFolderEditDialog,
       folderToEdit,
       editFolder,
@@ -687,6 +753,7 @@ export default {
       state,
       handleDrop,
       handleDropOnItem,
+      uploadProgress,
     };
   },
 };
@@ -724,8 +791,9 @@ td {
 }
 
 .progress-bar {
-  height: 100%;
+  height: 200px;
   background-color: #007bff;
+  transition: width 0.5s; /* Optional: add a transition for smoother progress bar movement */
 }
 .button {
   width: 100%;

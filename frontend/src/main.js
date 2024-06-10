@@ -8,6 +8,7 @@ import '@mdi/font/css/materialdesignicons.css'
 import './assets/css/main.css'
 import Toast, { POSITION } from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
+import uploader from 'vue-simple-uploader'
 
 
 axios.defaults.withCredentials = true;
@@ -21,6 +22,7 @@ app.use(store);  // Use your Vuex store
 app.use(Toast,{
     position: POSITION.CENTER
   });
+  app.use(uploader);
 
 app.mount('#app');
 // Make the app instance available globally
