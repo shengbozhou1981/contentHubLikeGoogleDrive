@@ -58,7 +58,7 @@ import { mapGetters } from 'vuex';
 export default {
     name: 'RecentItems',
   computed: {
-    ...mapGetters(['recentItems']),
+    ...mapGetters(['recentItems']), 
   },
 
 };
